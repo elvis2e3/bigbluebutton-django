@@ -19,12 +19,17 @@ def index(request):
             messages.warning(request, 'Cannot insert new meeting in database')
 
    open_meetings = []
-   for m in BBBMeeting.get_meetings_list():
-        open_meetings.append(m['meetingID'])
+   bbb_meeting = BBBMeeting.get_meetings_list()
+   filtro = []
+   for m in bbb_meeting:
+       if m['meetingID'][0:6] == "prueba":
+           filtro.append(m)
+       open_meetings.append(m['meetingID'])
 
    context = {
         'open_meetings': open_meetings,
-        'live_meetings': BBBMeeting.get_meetings_list(),
+        # 'live_meetings': bbb_meeting,
+        'live_meetings': filtro,
         'meetingsdb': BBBMeeting.objects.all().order_by('meetingID'),
         'form': CreateMeetingForm()
     }

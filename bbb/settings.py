@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'bigbluebutton',
+    'reunion',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -114,8 +115,10 @@ USE_L10N = True
 
 USE_TZ = True
 
-BBB_URL = 'https://kurstv.xyz/bigbluebutton/'
-BBB_SECRET = ' 3205b7096e0a0b67ca826f573a9cbf40'
+BBB_URL = 'https://enlinea.minedu.gob.bo/bigbluebutton/api/'
+BBB_SECRET = '0pmfWVytt0bZBI9AJdFRhgVNwNFSAGBT7xDoEBOE'
+# BBB_URL = 'https://bbb.gamvm.tk/bigbluebutton/api/'
+# BBB_SECRET = 'CRtWbjL9nsy5dehe4b2zIJxrFuIZat8Bou0Au6iN70'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -129,3 +132,8 @@ STATICFILES_DIRS = [
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
+
+
+LOGIN_REDIRECT_URL = 'panel'
