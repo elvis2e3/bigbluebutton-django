@@ -6,8 +6,6 @@ from django.conf import settings
 from django.contrib import messages
 
 
-
-
 def soup_api(req):
         source = request.urlopen(req).read()
         soup = BeautifulSoup(source, 'xml')
@@ -22,8 +20,8 @@ def soup_api(req):
                 return 'Error Api'
         except:
             return None
-
 #=== -> create meeting url===========================================
+
 
 # === <- create_paramater_for url ====================================
 def create_paramater_url(call_api, parameters):
@@ -32,13 +30,9 @@ def create_paramater_url(call_api, parameters):
 
     result = '%s&checksum=%s' % (parameters, checksum_val)
     return result
-
 # === <- create_paramater_for url =========================================
 
-
 # === -> catch error messages from in api ==================================
-
-
 
 class BBBMeeting(models.Model):
 
@@ -47,11 +41,10 @@ class BBBMeeting(models.Model):
     attendeePW = models.CharField(max_length=100)
     moderatorPW = models.CharField(max_length=100)
     duration = models.IntegerField(blank=False,  default=None)
-    record= models.BooleanField(blank=False, default=None)
+    record = models.BooleanField(blank=False, default=None)
     allowStartStopRecording = models.BooleanField(blank=False, default=None)
     welcome = models.CharField(max_length=500, blank=False, default=None)
-    running=models.BooleanField(blank=False, default=False)
-
+    running = models.BooleanField(blank=False, default=False)
 
     def __str__(self):
         return self.name
@@ -67,9 +60,7 @@ class BBBMeeting(models.Model):
                     field.name: getattr(meeting, field.name),
                 })
         return parse.urlencode(parameters)
-
     # === <-  model field to url  ================================
-
 
     # === -> request post to url  ================================
     @classmethod
@@ -77,9 +68,7 @@ class BBBMeeting(models.Model):
         request.POST._mutable = True;
         request.POST.pop('csrfmiddlewaretoken')
         return request.POST.urlencode()
-
     # === <- request post to url ===================================
-
 
     # === -> create meeting ==============================================
     @classmethod
@@ -92,9 +81,7 @@ class BBBMeeting(models.Model):
             return result
         else:
             raise
-
     # === <- create meeting ==============================================
-
 
     # === -> join meeting ==============================================
     @classmethod
@@ -109,10 +96,7 @@ class BBBMeeting(models.Model):
         secret_url = create_paramater_url(call_api, parameters)
         url_api = settings.BBB_URL+call_api+'?'+secret_url
         return url_api
-
     # === <- join meeting ==============================================
-
-
 
     # === <- end meeting ==============================================
     @classmethod
@@ -131,9 +115,7 @@ class BBBMeeting(models.Model):
             return result
         else:
             raise
-
     # === <- end meeting ==============================================
-
 
     # === -> meeting list ==============================================
     @classmethod
@@ -158,9 +140,7 @@ class BBBMeeting(models.Model):
             return meetings
         else:
             return 'error: not found result of meeting list'
-
     # === <- meeting list  ==============================================
-
 
     # === -> get meeting info ==============================================
     @classmethod
@@ -191,13 +171,7 @@ class BBBMeeting(models.Model):
 
 
         return info
-
-
-
-
     # === -> get meeting info ==============================================
-
-
 
     # === -> is running meeting ==============================================
     @classmethod
@@ -225,9 +199,7 @@ class BBBMeeting(models.Model):
                 return messages.success(request, 'succesfully')
             else:
                 return messages.warning(request, soup.find('messageKey').text + ': ' + soup.find('message').text)
-
     # === <- catch error messages from in api ==================================
-
 
     # print(create_meeting('wew','we','ap', 'mp'))
     # print('join meet mod->'+join_meeting('we', 'mp', 'v user'))
