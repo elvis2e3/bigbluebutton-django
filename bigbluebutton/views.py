@@ -22,13 +22,12 @@ def index(request):
    bbb_meeting = BBBMeeting.get_meetings_list()
    filtro = []
    for m in bbb_meeting:
-       if m['meetingID'][0:6] == "prueba":
-           filtro.append(m)
+       # if m['meetingID'][0:6] == "prueba":
+       filtro.append(m)
        open_meetings.append(m['meetingID'])
 
    context = {
         'open_meetings': open_meetings,
-        # 'live_meetings': bbb_meeting,
         'live_meetings': filtro,
         'meetingsdb': BBBMeeting.objects.all().order_by('meetingID'),
         'form': CreateMeetingForm()
@@ -54,13 +53,13 @@ def create_meeting(request, meetingID):
         'form': CreateMeetingForm()
     }
 
-    return redirect('/')
+    return redirect('/panel')
 
 
 
 def join_meeting(request, meetingID):
     meeting = BBBMeeting.objects.get(meetingID=meetingID)
-    full_name = 'User-01'
+    full_name = '%s' % request.user.get_full_name()
     password = getattr(meeting, 'moderatorPW')
 
     join_url = BBBMeeting.join_meeting(meetingID, password, full_name)
@@ -86,7 +85,8 @@ def end_meeting(request, meetingID):
     meeting = BBBMeeting.objects.get(meetingID=meetingID)
     password = getattr(meeting, 'moderatorPW')
     BBBMeeting.end_meeting(meetingID, password)
-    return redirect('/')
+    messages.warning(request, 'La reunion fue detenida.')
+    return redirect('/panel')
 
 
 def info_meeting(request, meetingID):

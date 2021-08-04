@@ -25,7 +25,7 @@ SECRET_KEY = 'qi%banar1e)i=jf9hw(7zd_n#z6vf!=*eb-y1u6mk%@$f%8ig8'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-ES'
 
 TIME_ZONE = 'UTC'
 
@@ -137,3 +137,4 @@ DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 
 
 LOGIN_REDIRECT_URL = 'panel'
+LOGOUT_REDIRECT_URL = 'index'

@@ -1,0 +1,34 @@
+{% load static %}
+<div class="sidebar-collapse">
+    <ul class="nav metismenu" id="side-menu">
+        <li class="nav-header">
+            {% if user.is_authenticated %}
+                <div class="dropdown profile-element">
+                    <span>
+                        {% if user.foto %}
+                            <img alt="image" class="img-circle" width="100px" height="100px" src="{{user.foto.url}}">
+                        {% else %}
+                            <img alt="image" class="img-circle" width="100px" height="100px" src="{% static 'img/user.png' %}">
+                        {% endif %}
+                    </span>
+                    <br>
+                    <strong class="font-bold" style="color: white">{{user.first_name}} {{user.last_name}}</strong>
+                </div>
+            {% else %}
+                <div class="dropdown profile-element">
+                    <h3 class="block m-t-xs" style="margin: 0; padding: 0;"><strong class="font-bold" style="color: antiquewhite">GAMVM</strong></h3>
+                </div>
+            {% endif %}
+            <div class="logo-element">
+                VM
+            </div>
+        </li>
+        <li class="active">
+            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">REUNION</span><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li><a href="{% url 'crear_reunion' %}">Crear Reunion</a></li>
+                <li><a href="">Unirme a una Reunion</a></li>
+            </ul>
+        </li>
+    </ul>
+</div>

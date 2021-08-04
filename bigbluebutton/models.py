@@ -196,7 +196,7 @@ class BBBMeeting(models.Model):
             return messages.warning(request, result)
         else:
             if soup.find('returncode').text == 'SUCCESS' and soup.find('messageKey').text == '':
-                return messages.success(request, 'succesfully')
+                return messages.success(request, 'Se inicio la reunion.')
             else:
                 return messages.warning(request, soup.find('messageKey').text + ': ' + soup.find('message').text)
     # === <- catch error messages from in api ==================================

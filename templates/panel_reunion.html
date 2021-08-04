@@ -1,12 +1,234 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <a href="{% url 'crear_reunion'%}">Crear Reunion</a>
-    <a href="">Unirme a una reunion</a>
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+{% endblock %}
+{% block cuerpo %}
 
-</body>
-</html>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Panel de Inicio</h2>
+        <ol class="breadcrumb">
+            <li class="active">
+                <strong>Panel de Inicio</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Panel de Inicio</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        {% if messages %}
+                            {% for message in messages %}
+                                {% if message.tags == 'success' %}
+                                    <div class="alert alert-success alert-dismissable">
+                                {% else %}
+                                    <div class="alert alert-warning alert-dismissable">
+                                {% endif %}
+                                        <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                        {{ message }}
+                                    </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Reuniones Activas</h4>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>ID Reunion</th>
+                                                <th>Duracion</th>
+                                                <th>Estdo</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for meeting in live_meetings %}
+                                                <tr>
+                                                    <td>{{meeting.meetingID}}</td>
+                                                    <td> {{meeting.duration}} min </td>
+                                                    <td>
+                                                        {% if meeting.running == 'true' %}
+                                                            <span class="badge badge-success"  href="{% url 'end' meeting.meetingID %}"> activo </span>
+                                                            <a data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
+                                                        {% else %}
+<!--                                                            <span class="badge badge-secondary" href="{% url 'create' meeting.meetingID %}"> inactivo </span>-->
+                                                            <a class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>
+                                                            <a data-toggle="modal" data-target="#infoModal" data-id="{{ meeting.meetingID }}" class="badge badge-warning getinfo" href="#"> informacion </a>
+                                                        {% endif %}
+                                                        {% empty %}
+                                                    <td>No hay reuniones activas</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Mis Reuniones</h4>
+
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>ID reunion</th>
+                                                <th>Nombre</th>
+                                                <th>Estado</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for meetingdb in meetingsdb %}
+
+                                            <tr>
+                                                <td>{{meetingdb.meetingID}}</td>
+                                                <td> {{meetingdb.name}} </td>
+
+                                                <td>
+                                                    {% if meetingdb.meetingID in open_meetings %}
+                                                    <a class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
+
+                                                    {% else %}
+                                                    <a class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
+                                                    {% endif %}
+
+                                            </tr>
+
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- info Modal -->
+<div class="modal fade bd-example-modal-lg" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="infoModalLabel"> meeting info </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+
+                    <tbody class="info-tbody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- info Modal -->
+
+<!-- join attendee form Modal -->
+<div class="modal fade" id="joinAttendeForm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="joinAttendeFormLabel"> join as attendee </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+
+                    <tbody>
+                    <form class="info-tbody" action="{% url 'attjoin' %}" method="POST"> {% csrf_token %}
+                        <div class="">
+                            <select class="attjoinopt form-control" name="meetingID" class="form-control">
+
+                            </select>
+                        </div>
+
+                        <input name="attpassword" class="form-control form-control-sm m-2" type="text" placeholder="attendee password">
+                        <input name="attname" class="form-control form-control-sm m-2" type="text" placeholder="attendee name">
+                        <button type="submit"  class="btn btn-dark m-2 btn-sm"> Join </button>
+
+                    </form>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- join attendee form -->
+</div>
+
+{% endblock %}
+{% block js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script>
+   $(document).ready(function() {
+//>>>>>info modal===========================================================
+       $('.getinfo').click(function () {
+           meetingID = $(this).data('id');
+            $('.info-thead').html('');
+            $('.info-tbody').html('');
+           $.ajax({
+               type: "GET",
+               url: "infomeeting/" + meetingID,
+               dataType: 'json',
+               success: function (data) {
+                   $.each(data, function (key, value) {
+                       // $('.info-thead').append(
+                       //     '<th>' + key + '</th>'
+                       // );
+
+                       $('.info-tbody').append(
+                           '<tr><th>'+ key +'</th><td>' + value +  '</td>'
+                       );
+                   })
+               }
+           })
+
+       });
+
+//<<<<<info modal ==============================================================
+
+
+
+//>>>>> join as attendee========================================================
+
+      $('.joinatt').click(function () {
+          $('.attjoinopt').empty()
+          meetingID = $(this).data('id');
+          $('.attjoinopt').append(new Option(meetingID, meetingID));
+
+      })
+
+//<<<<< join as attendee==============================================================
+
+   });
+
+ </script>
+{% endblock %}
