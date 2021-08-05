@@ -37,33 +37,39 @@ def index(request):
 
 
 def create_meeting(request, meetingID):
-    meeting = BBBMeeting.objects.get(meetingID=meetingID)
-    parameters = BBBMeeting.modelfield_to_url(meeting)
-    result = BBBMeeting.create_meeting(parameters)
-    BBBMeeting.catch_messages(request, result)
+    try:
+        meeting = BBBMeeting.objects.get(meetingID=meetingID)
+        parameters = BBBMeeting.modelfield_to_url(meeting)
+        result = BBBMeeting.create_meeting(parameters)
+        BBBMeeting.catch_messages(request, result)
 
-    open_meetings = []
-    for m in BBBMeeting.get_meetings_list():
-        open_meetings.append(m['meetingID'])
+        open_meetings = []
+        for m in BBBMeeting.get_meetings_list():
+            open_meetings.append(m['meetingID'])
 
-    context = {
-        'open_meetings': open_meetings,
-        'live_meetings': BBBMeeting.get_meetings_list(),
-        'meetingsdb': BBBMeeting.objects.all().order_by('meetingID'),
-        'form': CreateMeetingForm()
-    }
-
+        context = {
+            'open_meetings': open_meetings,
+            'live_meetings': BBBMeeting.get_meetings_list(),
+            'meetingsdb': BBBMeeting.objects.all().order_by('meetingID'),
+            'form': CreateMeetingForm()
+        }
+    except:
+        messages.warning(request, 'Tenemos problemas de conexión.')
     return redirect('/panel')
 
 
 
 def join_meeting(request, meetingID):
+    # if request.user.is_authenticated:
     meeting = BBBMeeting.objects.get(meetingID=meetingID)
+
     full_name = '%s' % request.user.get_full_name()
     password = getattr(meeting, 'moderatorPW')
 
     join_url = BBBMeeting.join_meeting(meetingID, password, full_name)
     return redirect(join_url)
+    # else:
+    #     return redirect("/")
 
 
 def attjoin(request):
@@ -81,11 +87,13 @@ def attjoin(request):
 
 
 def end_meeting(request, meetingID):
-
-    meeting = BBBMeeting.objects.get(meetingID=meetingID)
-    password = getattr(meeting, 'moderatorPW')
-    BBBMeeting.end_meeting(meetingID, password)
-    messages.warning(request, 'La reunion fue detenida.')
+    try:
+        meeting = BBBMeeting.objects.get(meetingID=meetingID)
+        password = getattr(meeting, 'moderatorPW')
+        BBBMeeting.end_meeting(meetingID, password)
+        messages.warning(request, 'La reunion fue detenida.')
+    except:
+        pass
     return redirect('/panel')
 
 

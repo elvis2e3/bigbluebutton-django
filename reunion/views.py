@@ -16,6 +16,10 @@ class IndexView(TemplateView):
     template_name = "index.html"
 
 
+class UnirmeView(TemplateView):
+    template_name = "unirme.html"
+
+
 class LoginView(LoginViewDjango):
     template_name = "login.html"
 
@@ -35,7 +39,10 @@ class PanelView(LoginRequiredMixin, TemplateView):
         context = super(PanelView, self).get_context_data(**kwargs)
 
         open_meetings = []
-        bbb_meeting = BBBMeeting.get_meetings_list()
+        try:
+            bbb_meeting = BBBMeeting.get_meetings_list()
+        except:
+            bbb_meeting = []
         db_meeting = BBBMeeting.objects.all().order_by('meetingID')
         filtro = []
 
@@ -81,3 +88,7 @@ class CrearReunionView(LoginRequiredMixin, FormView):
         )
         messages.success(self.request, 'Se creo una nueva reunion.')
         return super().form_valid(form)
+
+
+class ReunionLibreView(LoginRequiredMixin, TemplateView):
+    template_name = "reunion_libre.html"
