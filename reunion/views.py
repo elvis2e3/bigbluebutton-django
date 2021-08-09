@@ -7,17 +7,32 @@ from django.views.generic import TemplateView, FormView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
+from django.shortcuts import redirect
 
 from bigbluebutton.models import BBBMeeting
-from reunion.forms import CrearReunionForm
+from reunion.forms import CrearReunionForm, UnirmeForm
 
 
 class IndexView(TemplateView):
     template_name = "index.html"
 
 
-class UnirmeView(TemplateView):
+class UnirmeView(FormView):
+    form_class = UnirmeForm
     template_name = "unirme.html"
+    success_url = '/unirme'
+
+    def form_valid(self, form):
+        form_data = form.cleaned_data
+        codigo_reunion = form_data['codigo_reunion']
+        nombre_usuario = form_data['nombre_usuario']
+        reuniones = BBBMeeting.objects.filter(meetingID=codigo_reunion)
+        if reuniones.exists():
+            join_url = BBBMeeting.join_meeting(codigo_reunion, "estudiante", nombre_usuario)
+            return redirect(join_url)
+        else:
+            messages.warning(self.request, 'El codigo de reunion no es correcto, por favor introduzca un codigo valido!.')
+        return super().form_valid(form)
 
 
 class LoginView(LoginViewDjango):

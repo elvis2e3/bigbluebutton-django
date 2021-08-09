@@ -23,9 +23,23 @@
 
     <div class="loginColumns animated fadeInDown">
         <div class="row">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'success' %}
+                        <div class="alert alert-success alert-dismissable">
+                    {% else %}
+                        <div class="alert alert-warning alert-dismissable">
+                    {% endif %}
+<!--                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>-->
+                            {{ message }}
+                        </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="row">
 
             <div class="col-md-6">
-                <h2 class="font-bold">Educación - GAMVM</h2>
+                <h2 class="font-bold">Unirme a una reunion libre</h2>
 
                 <p>
                     Perfectly designed and precisely prepared admin theme with over 50 pages with extra new web app views.
@@ -50,16 +64,16 @@
                         {% csrf_token %}
                         <div class="form-group">
                             <p class="text-muted">
-                                {{ form.username.label }}:
+                                {{ form.codigo_reunion.label }}:
                             </p>
-                            {{ form.username }}
+                            {{ form.codigo_reunion }}
 <!--                            <input type="email" class="form-control" placeholder="Username" required="">-->
                         </div>
                         <div class="form-group">
                             <p class="text-muted">
-                                {{ form.password.label }}:
+                                {{ form.nombre_usuario.label }}:
                             </p>
-                                {{ form.password }}
+                                {{ form.nombre_usuario }}
 <!--                            <input type="password" class="form-control" placeholder="Password" required="">-->
                         </div>
                         <button type="submit" class="btn btn-primary block full-width m-b">Unirme</button>

@@ -1,9 +1,9 @@
-from django.forms import ModelForm, Form
+from django import forms
 
 from bigbluebutton.models import BBBMeeting
 
 
-class CrearReunionForm(ModelForm):
+class CrearReunionForm(forms.ModelForm):
     class Meta:
         model = BBBMeeting
         fields = [
@@ -16,7 +16,6 @@ class CrearReunionForm(ModelForm):
         }
 
 
-class UnirmeForm(Form):
-    # nombre =
-    # codigo_reunion =
-    pass
+class UnirmeForm(forms.Form):
+    nombre_usuario = forms.CharField()
+    codigo_reunion = forms.CharField()
