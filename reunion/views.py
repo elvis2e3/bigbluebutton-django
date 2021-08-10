@@ -13,6 +13,24 @@ from bigbluebutton.models import BBBMeeting
 from reunion.forms import CrearReunionForm, UnirmeForm
 
 
+def unirme_a_reunion(self, form):
+    form_data = form.cleaned_data
+    codigo_reunion = form_data['codigo_reunion']
+    nombre_usuario = form_data['nombre_usuario']
+    open_meetings = []
+    try:
+        bbb_meeting = BBBMeeting.get_meetings_list()
+    except:
+        bbb_meeting = []
+    for meet in bbb_meeting:
+        open_meetings.append(meet['meetingID'])
+    if codigo_reunion in open_meetings:
+        join_url = BBBMeeting.join_meeting(codigo_reunion, "estudiante", nombre_usuario)
+        return True, join_url
+    else:
+        return False, ""
+
+
 class IndexView(TemplateView):
     template_name = "index.html"
 
@@ -23,15 +41,12 @@ class UnirmeView(FormView):
     success_url = '/unirme'
 
     def form_valid(self, form):
-        form_data = form.cleaned_data
-        codigo_reunion = form_data['codigo_reunion']
-        nombre_usuario = form_data['nombre_usuario']
-        reuniones = BBBMeeting.objects.filter(meetingID=codigo_reunion)
-        if reuniones.exists():
-            join_url = BBBMeeting.join_meeting(codigo_reunion, "estudiante", nombre_usuario)
-            return redirect(join_url)
+        existe_reunion, unirme_url = unirme_a_reunion(self, form)
+        if existe_reunion:
+            return redirect(unirme_url)
         else:
-            messages.warning(self.request, 'El codigo de reunion no es correcto, por favor introduzca un codigo valido!.')
+            messages.warning(self.request,
+                             'El codigo de reunion no es correcto o no se encuentra activo en este momento!.')
         return super().form_valid(form)
 
 
@@ -47,6 +62,7 @@ class LoginView(LoginViewDjango):
 class LogoutView(LoginRequiredMixin, LogoutViewDjango):
     pass
 
+
 class PanelView(LoginRequiredMixin, TemplateView):
     template_name = "panel_reunion.html"
 
@@ -57,6 +73,7 @@ class PanelView(LoginRequiredMixin, TemplateView):
         try:
             bbb_meeting = BBBMeeting.get_meetings_list()
         except:
+            messages.warning(self.request, 'Tenemos problemas de conexion.')
             bbb_meeting = []
         db_meeting = BBBMeeting.objects.all().order_by('meetingID')
         filtro = []
@@ -77,7 +94,6 @@ class PanelView(LoginRequiredMixin, TemplateView):
         return context
 
 
-
 class CrearReunionView(LoginRequiredMixin, FormView):
     template_name = "crear_reunion.html"
     form_class = CrearReunionForm
@@ -93,8 +109,8 @@ class CrearReunionView(LoginRequiredMixin, FormView):
         BBBMeeting.objects.create(
             name=meeting_name,
             meetingID=code,
-            attendeePW=group_name,
-            moderatorPW="estudiante",
+            attendeePW="estudiante",
+            moderatorPW=group_name,
             duration=meeting_duration,
             record=True,
             allowStartStopRecording=True,
@@ -105,5 +121,17 @@ class CrearReunionView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class ReunionLibreView(LoginRequiredMixin, TemplateView):
+class ReunionLibreView(LoginRequiredMixin, FormView):
     template_name = "reunion_libre.html"
+    form_class = UnirmeForm
+    success_url = '/panel/reunion_libre'
+
+    def form_valid(self, form):
+        unirme_a_reunion(self, form)
+        existe_reunion, unirme_url = unirme_a_reunion(self, form)
+        if existe_reunion:
+            return redirect(unirme_url)
+        else:
+            messages.warning(self.request,
+                             'El codigo de reunion no es correcto o no se encuentra activo en este momento!.')
+        return super().form_valid(form)

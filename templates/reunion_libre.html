@@ -32,10 +32,37 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.tags == 'success' %}
+                                        <div class="alert alert-success alert-dismissable">
+                                    {% else %}
+                                        <div class="alert alert-warning alert-dismissable">
+                                    {% endif %}
+                                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                            {{ message }}
+                                        </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
                                 <form method="post">
                                     {% csrf_token %}
-                                    {{ form.as_p }}
+                                    <div class="form-group">
+                            <p class="text-muted">
+                                {{ form.codigo_reunion.label }}:
+                            </p>
+                            {{ form.codigo_reunion }}
+<!--                            <input type="email" class="form-control" placeholder="Username" required="">-->
+                        </div>
+                        <div class="form-group">
+                            <p class="text-muted">
+                                {{ form.nombre_usuario.label }}:
+                            </p>
+                                {{ form.nombre_usuario }}
+<!--                            <input type="password" class="form-control" placeholder="Password" required="">-->
+                        </div>
                                     <div class="row">
                                         <div class="col-lg-6">
                                             <button type="submit" class="btn btn-primary block full-width m-b">Unirme Reunión</button>
