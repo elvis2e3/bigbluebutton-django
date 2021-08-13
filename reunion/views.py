@@ -135,3 +135,7 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
             messages.warning(self.request,
                              'El codigo de reunion no es correcto o no se encuentra activo en este momento!.')
         return super().form_valid(form)
+
+
+class DetalleView(TemplateView):
+    template_name = "detalle_reunion.html"

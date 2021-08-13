@@ -1,6 +1,7 @@
 from django.urls import path
 
-from reunion.views import IndexView, LoginView, PanelView, CrearReunionView, LogoutView, UnirmeView, ReunionLibreView
+from reunion.views import IndexView, LoginView, PanelView, CrearReunionView, LogoutView, UnirmeView, ReunionLibreView, \
+    DetalleView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -10,4 +11,5 @@ urlpatterns = [
     path('panel', PanelView.as_view(), name='panel'),
     path('panel/crear_reunion', CrearReunionView.as_view(), name='crear_reunion'),
     path('panel/reunion_libre', ReunionLibreView.as_view(), name='reunion_libre'),
+    path('panel/detalle_reunion', DetalleView.as_view(), name='detalle_reunion'),
 ]

@@ -51,7 +51,7 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th>ID Reunión</th>
+                                                <th>Código Reunión</th>
                                                 <th>Duracion</th>
                                                 <th>Estdo</th>
                                             </tr>
@@ -89,9 +89,10 @@
                                         <table class="table">
                                             <thead>
                                             <tr>
-                                                <th>ID Reunión</th>
+<!--                                                <th>Código Reunión</th>-->
                                                 <th>Nombre</th>
                                                 <th>Estado</th>
+                                                <th>Detalle</th>
 
                                             </tr>
                                             </thead>
@@ -99,17 +100,19 @@
                                             {% for meetingdb in meetingsdb %}
 
                                             <tr>
-                                                <td>{{meetingdb.meetingID}}</td>
+<!--                                                <td>{{meetingdb.meetingID}}</td>-->
                                                 <td> {{meetingdb.name}} </td>
 
                                                 <td>
                                                     {% if meetingdb.meetingID in open_meetings %}
                                                     <a onclick="arctivar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
-
                                                     {% else %}
                                                     <a onclick="arctivar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
                                                     {% endif %}
-
+                                                </td>
+                                                <td>
+                                                    <a onclick="arctivar_spinner()" class="badge badge-success"  href="{% url 'detalle_reunion' %}"> Ver detalle </a>
+                                                </td>
                                             </tr>
 
                                             {% endfor %}
