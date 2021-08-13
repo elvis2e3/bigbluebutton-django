@@ -64,10 +64,10 @@
                                                     <td>
                                                         {% if meeting.running == 'true' %}
                                                             <span class="badge badge-success"  href="{% url 'end' meeting.meetingID %}"> activo </span>
-                                                            <a onclick="arctivar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
+                                                            <a target="_blank" onclick="arctivar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
                                                         {% else %}
 <!--                                                            <span class="badge badge-secondary" href="{% url 'create' meeting.meetingID %}"> inactivo </span>-->
-                                                            <a onclick="arctivar_spinner()" class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>
+                                                            <a target="_blank" class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>
 <!--                                                            <a data-toggle="modal" data-target="#infoModal" data-id="{{ meeting.meetingID }}" class="badge badge-warning getinfo" href="#"> informacion </a>-->
                                                         {% endif %}
                                                         {% empty %}
