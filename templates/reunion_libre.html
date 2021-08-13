@@ -65,10 +65,10 @@
                         </div>
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <button type="submit" class="btn btn-primary block full-width m-b">Unirme Reunión</button>
+                                            <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">Unirme Reunión</button>
                                         </div>
                                         <div class="col-lg-6">
-                                            <a class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
+                                            <a onclick="arctivar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
                                         </div>
                                     </div>
                                 </form>
@@ -86,5 +86,17 @@
         $(document).ready(function () {
             $('input').attr("class", "form-control");
         });
+        function activar_spinner_form(){
+            codigo = $("#id_codigo_reunion").val();
+            nombre = $("#id_nombre_usuario").val();
+            if(codigo != "" && nombre != ""){
+                Swal.fire({
+                    html: '<i class="fa fa-refresh fa-spin fa-5x"></i></br></br>',
+                    showConfirmButton: false,
+                    padding: '3em',
+                    backdrop: 'rgba(0,0,0,0.7)'
+                });
+            }
+        }
     </script>
 {% endblock %}
