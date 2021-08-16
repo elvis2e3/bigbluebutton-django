@@ -64,7 +64,7 @@
                                                     <td>
                                                         {% if meeting.running == 'true' %}
                                                             <span class="badge badge-success"  href="{% url 'end' meeting.meetingID %}"> activo </span>
-                                                            <a target="_blank" onclick="arctivar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
+                                                            <a target="_blank" onclick="activar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
                                                         {% else %}
 <!--                                                            <span class="badge badge-secondary" href="{% url 'create' meeting.meetingID %}"> inactivo </span>-->
                                                             <a target="_blank" class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>
@@ -105,13 +105,13 @@
 
                                                 <td>
                                                     {% if meetingdb.meetingID in open_meetings %}
-                                                    <a onclick="arctivar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
+                                                    <a onclick="activar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
                                                     {% else %}
-                                                    <a onclick="arctivar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
+                                                    <a onclick="activar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
                                                     {% endif %}
                                                 </td>
                                                 <td>
-                                                    <a onclick="arctivar_spinner()" class="badge badge-success"  href="{% url 'detalle_reunion' %}"> Ver detalle </a>
+                                                    <a onclick="activar_spinner()" class="badge badge-warning"  href="{% url 'detalle_reunion' %}"> Ver detalle </a>
                                                 </td>
                                             </tr>
 

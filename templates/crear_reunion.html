@@ -9,7 +9,7 @@
             <h2>Crear Reunion</h2>
             <ol class="breadcrumb">
                 <li>
-                    <a href="{% url 'panel' %}">Panel de Inicio</a>
+                    <a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Inicio</a>
                 </li>
                 <li class="active">
                     <strong>Crear Reunion</strong>
@@ -41,7 +41,7 @@
                                             <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">Crear Reunion</button>
                                         </div>
                                         <div class="col-lg-6">
-                                            <a onclick="arctivar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
+                                            <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
                                         </div>
                                     </div>
                                 </form>
