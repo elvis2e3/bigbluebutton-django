@@ -92,7 +92,7 @@
 <!--                                                <th>Código Reunión</th>-->
                                                 <th>Nombre</th>
                                                 <th>Estado</th>
-                                                <th>Detalle</th>
+{#                                                <th>Detalle</th>#}
 
                                             </tr>
                                             </thead>
@@ -110,9 +110,9 @@
                                                     <a onclick="activar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
                                                     {% endif %}
                                                 </td>
-                                                <td>
-                                                    <a onclick="activar_spinner()" class="badge badge-warning"  href="{% url 'detalle_reunion' %}"> Ver detalle </a>
-                                                </td>
+{#                                                <td>#}
+{#                                                    <a onclick="activar_spinner()" class="badge badge-warning"  href="{% url 'detalle_reunion' %}"> Ver detalle </a>#}
+{#                                                </td>#}
                                             </tr>
 
                                             {% endfor %}
