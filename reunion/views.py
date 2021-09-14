@@ -1,7 +1,7 @@
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as LoginViewDjango, LogoutView as LogoutViewDjango
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from hashlib import sha1
 
 # Create your views here.
@@ -12,7 +12,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 
 from bigbluebutton.models import BBBMeeting
-from reunion.forms import CrearReunionForm, UnirmeForm
+from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearAulaForm
 from reunion.models import Aula
 
 
@@ -140,19 +140,19 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class DetalleView(TemplateView):
-    template_name = "detalle_reunion.html"
-
-
-class CrearAulaView(CreateView):
-    model = Aula
+class CrearAulaView(FormView):
+    form_class = CrearAulaForm
     template_name = "crear_aula.html"
-    fields = ['nombre', "miembros"]
     success_url = '/panel/lista_aula'
 
     def form_valid(self, form):
         form.instance.moderador = self.request.user
+        form.save()
         return super().form_valid(form)
+
+
+class DetalleView(TemplateView):
+    template_name = "detalle_reunion.html"
 
 
 class ListaAulaView(ListView):
@@ -160,11 +160,16 @@ class ListaAulaView(ListView):
     template_name = "lista_aulas.html"
 
 
-class CrearEstudianteView(CreateView):
-    model = User
+class CrearEstudianteView(FormView):
+    form_class = CrearUsuarioForm
     template_name = "crear_estudiante.html"
-    fields = ['username', "first_name", "first_name", "email", "password"]
     success_url = '/panel/lista_estudiante'
+
+    def form_valid(self, form):
+        user = form.save()
+        group = Group.objects.get(name='estudiante')
+        group.user_set.add(user)
+        return super().form_valid(form)
 
 
 class ListaEstudianteView(ListView):
