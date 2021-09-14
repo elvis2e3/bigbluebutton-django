@@ -33,17 +33,9 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
-                                <form method="post">
-                                    {% csrf_token %}
+                                <form method="post">{% csrf_token %}
                                     {{ form.as_p }}
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">Crear Reunion</button>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
-                                        </div>
-                                    </div>
+                                    <input type="submit" value="Save">
                                 </form>
                             </div>
                         </div>

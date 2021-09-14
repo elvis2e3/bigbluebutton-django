@@ -6,13 +6,13 @@
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
-            <h2>Crear Reunion</h2>
+            <h2>Lista de Estudiantes</h2>
             <ol class="breadcrumb">
                 <li>
                     <a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Inicio</a>
                 </li>
                 <li class="active">
-                    <strong>Crear Reunion</strong>
+                    <strong>Lista de Estudiantes</strong>
                 </li>
             </ol>
         </div>
@@ -23,7 +23,7 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Crear Reunion</h5>
+                        <h5>Lista de Estudiantes</h5>
                         <div class="ibox-tools">
                             <a class="collapse-link">
                                 <i class="fa fa-chevron-up"></i>
@@ -32,19 +32,31 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                            <div class="col-lg-8 col-lg-offset-2">
-                                <form method="post">
-                                    {% csrf_token %}
-                                    {{ form.as_p }}
-                                    <div class="row">
-                                        <div class="col-lg-6">
-                                            <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">Crear Reunion</button>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Cancelar</a>
-                                        </div>
-                                    </div>
-                                </form>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Correo</th>
+                                        <th>Rol</th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in object_list %}
+
+                                    <tr>
+                                        <!--                                                <td>{{meetingdb.meetingID}}</td>-->
+                                        <td> {{user.username}} </td>
+                                        <td> {{user.first_name}} {{user.last_name}} </td>
+                                        <td> {{user.email}} </td>
+                                        <td> {{user.groups.all.0}} </td>
+                                    </tr>
+
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

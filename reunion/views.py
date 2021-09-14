@@ -1,9 +1,11 @@
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as LoginViewDjango, LogoutView as LogoutViewDjango
+from django.contrib.auth.models import User
 from hashlib import sha1
 
 # Create your views here.
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, FormView, ListView, CreateView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -11,6 +13,7 @@ from django.shortcuts import redirect
 
 from bigbluebutton.models import BBBMeeting
 from reunion.forms import CrearReunionForm, UnirmeForm
+from reunion.models import Aula
 
 
 def unirme_a_reunion(self, form):
@@ -139,3 +142,31 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
 
 class DetalleView(TemplateView):
     template_name = "detalle_reunion.html"
+
+
+class CrearAulaView(CreateView):
+    model = Aula
+    template_name = "crear_aula.html"
+    fields = ['nombre', "miembros"]
+    success_url = '/panel/lista_aula'
+
+    def form_valid(self, form):
+        form.instance.moderador = self.request.user
+        return super().form_valid(form)
+
+
+class ListaAulaView(ListView):
+    model = Aula
+    template_name = "lista_aulas.html"
+
+
+class CrearEstudianteView(CreateView):
+    model = User
+    template_name = "crear_estudiante.html"
+    fields = ['username', "first_name", "first_name", "email", "password"]
+    success_url = '/panel/lista_estudiante'
+
+
+class ListaEstudianteView(ListView):
+    model = User
+    template_name = "lista_estudiantes.html"

@@ -28,9 +28,21 @@
             <ul class="nav nav-second-level">
                 <li><a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Reuniones</a></li>
                 <li><a onclick="activar_spinner()" href="{% url 'crear_reunion' %}">Crear Reunión</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'reunion_libre' %}">Aulas</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'reunion_libre' %}">Estudiantes</a></li>
                 <li><a onclick="activar_spinner()" href="{% url 'reunion_libre' %}">Unirme a una Reunión</a></li>
+            </ul>
+        </li>
+        <li class="active">
+            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Estudiantes</span><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Estudiantes</a></li>
+                <li><a onclick="activar_spinner()" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
+            </ul>
+        </li>
+        <li class="active">
+            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Aulas</span><span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level">
+                <li><a onclick="activar_spinner()" href="{% url 'lista_aula' %}">Lista de Aulas</a></li>
+                <li><a onclick="activar_spinner()" href="{% url 'crear_aula' %}">Crear Aulas</a></li>
             </ul>
         </li>
     </ul>
