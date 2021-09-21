@@ -26,46 +26,64 @@
         <li class="active">
             <a href="#"><i class="fa fa-video-camera"></i> <span class="nav-label">REUNIÓN</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Reuniones</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_reunion' %}">Crear Reunión</a></li>
+                {% if perms.bigbluebutton.view_bbbmeeting %}
+                    <li><a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Reuniones</a></li>
+                {% endif %}
+                {% if perms.bigbluebutton.add_bbbmeeting %}
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_reunion' %}">Crear Reunión</a></li>
+                {% endif %}
                 <li><a onclick="activar_spinner()" href="{% url 'reunion_libre' %}">Unirme a una Reunión</a></li>
             </ul>
         </li>
         <li class="active">
             <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Estudiantes</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Profesores</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Estudiantes</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
+                {% if perms.reunion.view_usuario %}
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Estudintes</a></li>
+                {% endif %}
+                {% if perms.reunion.add_usuario %}
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
+                {% endif %}
             </ul>
         </li>
-        <li class="active">
-            <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Profesores</span><span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Profesores</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Profesor</a></li>
-            </ul>
-        </li>
-        <li class="active">
-            <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Directores</span><span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Directores</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Director</a></li>
-            </ul>
-        </li>
+        {% if user.groups.all.0.id > 2 %}
+            <li class="active">
+                <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Profesores</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Profesores</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Profesor</a></li>
+                </ul>
+            </li>
+        {% endif %}
+        {% if user.groups.all.0.id > 3 %}
+            <li class="active">
+                <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Directores</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Directores</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Director</a></li>
+                </ul>
+            </li>
+        {% endif %}
         <li class="active">
             <a href="#"><i class="fa fa-university"></i> <span class="nav-label">Aulas</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Aulas</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Aulas</a></li>
+                {% if perms.reunion.view_sala %}
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Aulas</a></li>
+                {% endif %}
+                {% if perms.reunion.add_sala %}
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Aulas</a></li>
+                {% endif %}
             </ul>
         </li>
-        <li class="active">
-            <a href="#"><i class="fa fa-university"></i> <span class="nav-label">Entidad Educativa</span><span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-                <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Entidades</a></li>
-                <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Entidad</a></li>
-            </ul>
-        </li>
+        {% if user.groups.all.0.id > 2 %}
+            <li class="active">
+                <a href="#"><i class="fa fa-university"></i> <span class="nav-label">Entidad Educativa</span><span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Entidades</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Entidad</a></li>
+                </ul>
+            </li>
+        {% endif %}
     </ul>
+    {{ perms.reunion }}
 </div>

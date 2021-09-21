@@ -6,12 +6,24 @@ class Command(BaseCommand):
     help = 'help text'
 
     def handle(self, *args, **options):
-        lista_id_permisos_para_estudiante = [4, 12, 40]
+        lista_id_permisos_para_estudiante = [
+            "view_usuario",
+            "view_bbbmeeting",
+            "view_sala",
+        ]
         lista_id_permisos_para_profesor = [
-            1, 2, 3, 9, 10, 11, 37, 38, 39
-                         ] + lista_id_permisos_para_estudiante
-        lista_id_permisos_para_director = [6, 8] + lista_id_permisos_para_profesor
-        lista_id_permisos_para_admin = [5, 7] + lista_id_permisos_para_director
+            "add_bbbmeeting",
+            "change_bbbmeeting",
+            "delete_bbbmeeting",
+            "add_sala",
+            "change_sala",
+            "delete_sala",
+            "add_usuario",
+            "change_usuario",
+            "delete_usuario",
+        ] + lista_id_permisos_para_estudiante
+        lista_id_permisos_para_director = ["view_entidad", "change_entidad"] + lista_id_permisos_para_profesor
+        lista_id_permisos_para_admin = ["add_entidad", "delete_entidad"] + lista_id_permisos_para_director
         estudiante = Group.objects.create(
             name="Estudiante"
         )
@@ -28,8 +40,8 @@ class Command(BaseCommand):
             name="Admin"
         )
         print("El grupo Admin fue creado...")
-        estudiante.permissions.set(Permission.objects.filter(id__in=lista_id_permisos_para_estudiante))
-        profesor.permissions.set(Permission.objects.filter(id__in=lista_id_permisos_para_profesor))
-        director.permissions.set(Permission.objects.filter(id__in=lista_id_permisos_para_director))
-        admin.permissions.set(Permission.objects.filter(id__in=lista_id_permisos_para_admin))
+        estudiante.permissions.set(Permission.objects.filter(codename__in=lista_id_permisos_para_estudiante))
+        profesor.permissions.set(Permission.objects.filter(codename__in=lista_id_permisos_para_profesor))
+        director.permissions.set(Permission.objects.filter(codename__in=lista_id_permisos_para_director))
+        admin.permissions.set(Permission.objects.filter(codename__in=lista_id_permisos_para_admin))
         print("Se agrego los respectivos permisos a los grupos...")
