@@ -5,15 +5,15 @@ from django.contrib.auth.models import User, Group
 from hashlib import sha1
 
 # Create your views here.
-from django.views.generic import TemplateView, FormView, ListView, CreateView
+from django.views.generic import TemplateView, FormView, ListView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import redirect
 
 from bigbluebutton.models import BBBMeeting
-from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearAulaForm
-from reunion.models import Aula
+from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearSalaForm
+from reunion.models import Sala
 
 
 def unirme_a_reunion(self, form):
@@ -140,8 +140,8 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class CrearAulaView(FormView):
-    form_class = CrearAulaForm
+class CrearSalaView(FormView):
+    form_class = CrearSalaForm
     template_name = "crear_aula.html"
     success_url = '/panel/lista_aula'
 
@@ -155,8 +155,8 @@ class DetalleView(TemplateView):
     template_name = "detalle_reunion.html"
 
 
-class ListaAulaView(ListView):
-    model = Aula
+class ListaSalaView(ListView):
+    model = Sala
     template_name = "lista_aulas.html"
 
 

@@ -72,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'bbb.wsgi.application'
+AUTH_PROFILE_MODULE = 'reunion.Usuario'
 
 
 # Database
