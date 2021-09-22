@@ -59,8 +59,8 @@
             <li class="active">
                 <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Directores</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Directores</a></li>
-                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Director</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_directores' %}">Lista de Directores</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_director' %}">Crear Director</a></li>
                 </ul>
             </li>
         {% endif %}
@@ -79,11 +79,16 @@
             <li class="active">
                 <a href="#"><i class="fa fa-university"></i> <span class="nav-label">Entidad Educativa</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Entidades</a></li>
-                    <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Entidad</a></li>
+                    {% if perms.reunion.view_entidad %}
+                        <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Entidades</a></li>
+                    {% endif %}
+                    {% if perms.reunion.add_entidad %}
+                        <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Entidad</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
     </ul>
-    {{ perms.reunion }}
+    <br>
+    <br>
 </div>

@@ -9,11 +9,12 @@ from django.views.generic import TemplateView, FormView, ListView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 
 from bigbluebutton.models import BBBMeeting
-from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearSalaForm
-from reunion.models import Sala
+from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearSalaForm, CrearDirectorForm, \
+    EditarDirectorForm
+from reunion.models import Sala, Usuario
 
 
 def unirme_a_reunion(self, form):
@@ -95,6 +96,54 @@ class PanelView(LoginRequiredMixin, TemplateView):
         context['meetingsdb'] = db_meeting
 
         return context
+
+
+class ListaDirectoresView(ListView):
+    model = Usuario
+    template_name = "lista_directores.html"
+
+
+class CrearDirectorView(LoginRequiredMixin, FormView):
+    template_name = "form_director.html"
+    form_class = CrearDirectorForm
+    success_url = '/panel/lista_directores'
+
+    def form_valid(self, form):
+        form_data = form.cleaned_data
+        usuario = form_data['usuario']
+        password = form_data['password']
+        user = User.objects.create_user(
+            username=usuario,
+            email="",
+            password=password
+        )
+        user.groups.add(Group.objects.get(name="Director"))
+        usuario = Usuario.objects.create(user=user)
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se creo un nuevo director.')
+        return super().form_valid(form)
+
+
+class EditarDirectorView(LoginRequiredMixin, FormView):
+    template_name = "form_director.html"
+    form_class = EditarDirectorForm
+    success_url = '/panel/lista_directores'
+
+    def get(self, request, *args, **kwargs):
+        id_director = kwargs["id_director"]
+        initial = get_object_or_404(Usuario, id=id_director)
+        form = self.form_class(initial=initial.__dict__)
+        return render(request, self.template_name, {'form': form, "editar": True})
+
+    def form_valid(self, form):
+        id_director = self.kwargs["id_director"]
+        usuario = get_object_or_404(Usuario, id=id_director)
+        form_data = form.cleaned_data
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se edito correctamente al usuario director.')
+        return super().form_valid(form)
 
 
 class CrearReunionView(LoginRequiredMixin, FormView):

@@ -2,7 +2,38 @@ from django import forms
 from django.contrib.auth.models import User
 
 from bigbluebutton.models import BBBMeeting
-from reunion.models import Sala
+from reunion.models import Sala, Usuario
+
+
+class EditarDirectorForm(forms.Form):
+    nombres = forms.CharField(label="Nombre completo *")
+    apellido_paterno = forms.CharField(label="Apellido paterno", required=False)
+    apellido_materno = forms.CharField(label="Apellido materno", required=False)
+    numero_telefonico = forms.IntegerField(label="Número telefónico", required=False)
+    carnet_identidad = forms.CharField(label="Carnet de identidad", required=False)
+    genero = forms.ChoiceField(label="Genero", widget=forms.Select(), required=False)
+    fecha_nacimiento = forms.DateField(label="Fecha de nacimiento", widget=forms.DateInput, required=False)
+    item = forms.IntegerField(label="Item", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        self.fields['genero'].choices = Usuario.CHOICES_GENERO
+        self.fields['numero_telefonico'].initial = 0
+        self.fields['item'].initial = 0
+
+
+class CrearDirectorForm(EditarDirectorForm):
+    usuario = forms.CharField(label="Nombre de usuario *")
+    password = forms.CharField(label="Contraseña de usuario *", widget=forms.PasswordInput)
+
+
+class CrearEntidadForm(forms.ModelForm):
+    nombre = forms.CharField(label="Nombre de aula")
+    # encargado =
+
+    class Meta:
+        model = Sala
+        fields = ('nombre', "miembros")
 
 
 class CrearReunionForm(forms.ModelForm):
