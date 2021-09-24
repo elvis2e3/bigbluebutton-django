@@ -25,18 +25,18 @@ class Usuario(models.Model):
     item = models.IntegerField(default=0)
 
     def __str__(self):
-          return "%s" % self.user
+          return "(%s) %s %s %s" % (self.user, self.nombres, self.apellido_paterno, self.apellido_materno)
 
 
 class Entidad(models.Model):
     nombre = models.CharField(max_length=100)
     encargado = models.ForeignKey(
-        User,
+        Usuario,
         on_delete=models.CASCADE,
         related_name='encargado',
         db_column='encargado',
     )
-    miembros = models.ManyToManyField(User)
+    miembros = models.ManyToManyField(Usuario)
 
     def __str__(self):
         return self.nombre

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 from hashlib import sha1
 
 # Create your views here.
-from django.views.generic import TemplateView, FormView, ListView
+from django.views.generic import TemplateView, FormView, ListView, DeleteView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -13,8 +13,8 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from bigbluebutton.models import BBBMeeting
 from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearSalaForm, CrearDirectorForm, \
-    EditarDirectorForm
-from reunion.models import Sala, Usuario
+    EditarDirectorForm, EntidadForm
+from reunion.models import Sala, Usuario, Entidad
 
 
 def unirme_a_reunion(self, form):
@@ -67,6 +67,9 @@ class LogoutView(LoginRequiredMixin, LogoutViewDjango):
     pass
 
 
+# ============== Reuniones ========================
+
+
 class PanelView(LoginRequiredMixin, TemplateView):
     template_name = "panel_reunion.html"
 
@@ -96,54 +99,6 @@ class PanelView(LoginRequiredMixin, TemplateView):
         context['meetingsdb'] = db_meeting
 
         return context
-
-
-class ListaDirectoresView(ListView):
-    model = Usuario
-    template_name = "lista_directores.html"
-
-
-class CrearDirectorView(LoginRequiredMixin, FormView):
-    template_name = "form_director.html"
-    form_class = CrearDirectorForm
-    success_url = '/panel/lista_directores'
-
-    def form_valid(self, form):
-        form_data = form.cleaned_data
-        usuario = form_data['usuario']
-        password = form_data['password']
-        user = User.objects.create_user(
-            username=usuario,
-            email="",
-            password=password
-        )
-        user.groups.add(Group.objects.get(name="Director"))
-        usuario = Usuario.objects.create(user=user)
-        usuario.__dict__.update(form_data)
-        usuario.save()
-        messages.success(self.request, 'Se creo un nuevo director.')
-        return super().form_valid(form)
-
-
-class EditarDirectorView(LoginRequiredMixin, FormView):
-    template_name = "form_director.html"
-    form_class = EditarDirectorForm
-    success_url = '/panel/lista_directores'
-
-    def get(self, request, *args, **kwargs):
-        id_director = kwargs["id_director"]
-        initial = get_object_or_404(Usuario, id=id_director)
-        form = self.form_class(initial=initial.__dict__)
-        return render(request, self.template_name, {'form': form, "editar": True})
-
-    def form_valid(self, form):
-        id_director = self.kwargs["id_director"]
-        usuario = get_object_or_404(Usuario, id=id_director)
-        form_data = form.cleaned_data
-        usuario.__dict__.update(form_data)
-        usuario.save()
-        messages.success(self.request, 'Se edito correctamente al usuario director.')
-        return super().form_valid(form)
 
 
 class CrearReunionView(LoginRequiredMixin, FormView):
@@ -187,6 +142,126 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
             messages.warning(self.request,
                              'El codigo de reunion no es correcto o no se encuentra activo en este momento!.')
         return super().form_valid(form)
+
+
+# ============== Directores =======================
+
+
+class ListaDirectoresView(ListView):
+    model = Usuario
+    template_name = "lista_directores.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_list'] = Usuario.objects.filter(user__groups__name="Director")
+        return context
+
+
+class CrearDirectorView(LoginRequiredMixin, FormView):
+    template_name = "form_director.html"
+    form_class = CrearDirectorForm
+    success_url = '/panel/lista_directores'
+
+    def form_valid(self, form):
+        form_data = form.cleaned_data
+        usuario = form_data['usuario']
+        password = form_data['password']
+        user = User.objects.create_user(
+            username=usuario,
+            email="",
+            password=password
+        )
+        user.groups.add(Group.objects.get(name="Director"))
+        usuario = Usuario.objects.create(user=user)
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se creo un nuevo director.')
+        return super().form_valid(form)
+
+
+class EditarDirectorView(LoginRequiredMixin, FormView):
+    template_name = "form_director.html"
+    form_class = EditarDirectorForm
+    success_url = '/panel/lista_directores'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id_director = self.kwargs["id_director"]
+        initial = get_object_or_404(Usuario, id=id_director)
+        form = self.form_class(initial=initial.__dict__)
+        context['form'] = form
+        context['editar'] = True
+        context['director'] = initial
+        return context
+
+    def form_valid(self, form):
+        id_director = self.kwargs["id_director"]
+        usuario = get_object_or_404(Usuario, id=id_director)
+        form_data = form.cleaned_data
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se edito correctamente al usuario director.')
+        return super().form_valid(form)
+
+
+class EliminarDirector(DeleteView):
+    model = User
+    template_name = "eliminar_director.html"
+    success_url = "/panel/lista_directores"
+
+
+# ============== Entidades ========================
+
+
+class ListaEntidadesView(ListView):
+    model = Entidad
+    template_name = "lista_entidades.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_list'] = Entidad.objects.all()
+        return context
+
+
+class CrearEntidadView(LoginRequiredMixin, FormView):
+    template_name = "form_entidad.html"
+    form_class = EntidadForm
+    success_url = '/panel/lista_entidades'
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'Se creo una nueva entidad.')
+        return super().form_valid(form)
+
+
+class EditarEntidadView(LoginRequiredMixin, FormView):
+    template_name = "form_entidad.html"
+    form_class = EntidadForm
+    success_url = '/panel/lista_entidades'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id_entidad = self.kwargs["id_entidad"]
+        initial = get_object_or_404(Entidad, id=id_entidad)
+        form = self.form_class(initial=initial.__dict__)
+        context['form'] = form
+        context['editar'] = True
+        context['entidad'] = initial
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        messages.success(self.request, 'La entidad se edito correctamente.')
+        return super().form_valid(form)
+
+
+class EliminarEntidad(DeleteView):
+    model = Entidad
+    template_name = "eliminar_entidad.html"
+    success_url = "/panel/lista_entidades"
+
+
+# ==============
 
 
 class CrearSalaView(FormView):

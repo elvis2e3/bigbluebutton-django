@@ -2,7 +2,31 @@ from django import forms
 from django.contrib.auth.models import User
 
 from bigbluebutton.models import BBBMeeting
-from reunion.models import Sala, Usuario
+from reunion.models import Sala, Usuario, Entidad
+
+
+# ============= Reuniones ========================
+
+
+class CrearReunionForm(forms.ModelForm):
+    class Meta:
+        model = BBBMeeting
+        fields = [
+            "name",
+            "duration",
+        ]
+        labels={
+            "name": "Nombre de la reunion",
+            "duration": "Duracion de la reunion (min)"
+        }
+
+
+class UnirmeForm(forms.Form):
+    nombre_usuario = forms.CharField()
+    codigo_reunion = forms.CharField()
+
+
+# ============= Directores ========================
 
 
 class EditarDirectorForm(forms.Form):
@@ -27,31 +51,18 @@ class CrearDirectorForm(EditarDirectorForm):
     password = forms.CharField(label="Contraseña de usuario *", widget=forms.PasswordInput)
 
 
-class CrearEntidadForm(forms.ModelForm):
-    nombre = forms.CharField(label="Nombre de aula")
-    # encargado =
+# ============= Entidades ========================
+
+
+class EntidadForm(forms.ModelForm):
+    nombre = forms.CharField(label="Nombre de la Entidad Educativa")
 
     class Meta:
-        model = Sala
-        fields = ('nombre', "miembros")
+        model = Entidad
+        fields = ('nombre', "encargado", "miembros")
 
 
-class CrearReunionForm(forms.ModelForm):
-    class Meta:
-        model = BBBMeeting
-        fields = [
-            "name",
-            "duration",
-        ]
-        labels={
-            "name": "Nombre de la reunion",
-            "duration": "Duracion de la reunion (min)"
-        }
-
-
-class UnirmeForm(forms.Form):
-    nombre_usuario = forms.CharField()
-    codigo_reunion = forms.CharField()
+# ================
 
 
 class CrearUsuarioForm(forms.ModelForm):
