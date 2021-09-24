@@ -60,7 +60,11 @@
                                     <tr>
                                         <td><a href="{% url 'editar_entidad' entidad.id %}">{{entidad.nombre}}</a> </td>
                                         <td> {{entidad.encargado}} </td>
-                                        <td> {{entidad.miembros}} </td>
+                                        <td>
+                                            {% for miembro in entidad.miembros.all %}
+                                                <p>{{miembro}}</p>
+                                            {% endfor %}
+                                        </td>
                                     </tr>
 
                                     {% endfor %}

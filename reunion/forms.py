@@ -50,6 +50,12 @@ class CrearDirectorForm(EditarDirectorForm):
     usuario = forms.CharField(label="Nombre de usuario *")
     password = forms.CharField(label="Contraseña de usuario *", widget=forms.PasswordInput)
 
+    def clean_usuario(self):
+        usuario = self.cleaned_data['usuario']
+        if len(User.objects.filter(username=usuario)) > 0:
+            raise forms.ValidationError("El nombre del usuario ya esta registrado, intente con otro nombre por favor!")
+        return usuario
+
 
 # ============= Entidades ========================
 
@@ -60,6 +66,11 @@ class EntidadForm(forms.ModelForm):
     class Meta:
         model = Entidad
         fields = ('nombre', "encargado", "miembros")
+
+    def __init__(self, *args, **kwargs):
+        super(EntidadForm, self).__init__(*args, **kwargs)
+        self.fields['encargado'].queryset = Usuario.objects.filter(user__groups__name="Director")
+        self.fields['miembros'].queryset = Usuario.objects.filter(user__groups__name="Estudiante")
 
 
 # ================

@@ -243,6 +243,7 @@ class EditarEntidadView(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
         id_entidad = self.kwargs["id_entidad"]
         initial = get_object_or_404(Entidad, id=id_entidad)
+        print(initial.__dict__)
         form = self.form_class(initial=initial.__dict__)
         context['form'] = form
         context['editar'] = True
