@@ -3,7 +3,7 @@ from django.urls import path
 from reunion.views import IndexView, LoginView, PanelView, CrearReunionView, LogoutView, UnirmeView, ReunionLibreView, \
     DetalleView, ListaSalaView, ListaEstudianteView, CrearEstudianteView, CrearSalaView, ListaDirectoresView, \
     CrearDirectorView, EditarDirectorView, EliminarDirector, ListaEntidadesView, CrearEntidadView, EliminarEntidad, \
-    EditarEntidadView
+    EditarEntidadView, ListaProfesoresView, CrearProfesorView, EditarProfesorView, EliminarProfesor
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -23,8 +23,13 @@ urlpatterns = [
     # =========== Entidades ========================
     path('panel/lista_entidades', ListaEntidadesView.as_view(), name='lista_entidades'),
     path('panel/crear_entidad', CrearEntidadView.as_view(), name='crear_entidad'),
-    path('panel/editar_entidad/<int:id_entidad>', EditarEntidadView.as_view(), name='editar_entidad'),
+    path('panel/editar_entidad/<int:pk>', EditarEntidadView.as_view(), name='editar_entidad'),
     path('panel/eliminar_entidad/<pk>/', EliminarEntidad.as_view(), name='eliminar_entidad'),
+    # ============ Profesores ======================
+    path('panel/lista_profesores', ListaProfesoresView.as_view(), name='lista_profesores'),
+    path('panel/crear_profesor', CrearProfesorView.as_view(), name='crear_profesor'),
+    path('panel/editar_profesor/<int:id_profesor>', EditarProfesorView.as_view(), name='editar_profesor'),
+    path('panel/eliminar_profesor/<pk>/', EliminarProfesor.as_view(), name='eliminar_profesor'),
     # ============
     path('panel/lista_sala', ListaSalaView.as_view(), name='lista_sala'),
     path('panel/crear_sala', CrearSalaView.as_view(), name='crear_sala'),

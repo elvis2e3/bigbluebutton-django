@@ -6,13 +6,13 @@
 
     <div class="row wrapper border-bottom white-bg page-heading">
         <div class="col-sm-4">
-            <h2>Lista de Entidades</h2>
+            <h2>Lista de Directores</h2>
             <ol class="breadcrumb">
                 <li>
                     <a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Inicio</a>
                 </li>
                 <li class="active">
-                    <strong>Lista de Entidades</strong>
+                    <strong>Lista de Directores</strong>
                 </li>
             </ol>
         </div>
@@ -23,7 +23,7 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Lista de Entidades</h5>
+                        <h5>Lista de Directores</h5>
                         <div class="ibox-tools">
                             <a class="collapse-link">
                                 <i class="fa fa-chevron-up"></i>
@@ -50,21 +50,29 @@
                                 <table class="table">
                                     <thead>
                                     <tr>
-                                        <th>Nombre</th>
-                                        <th>Encargado</th>
-                                        <th>Miembros</th>
+                                        <th>Username</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Apellido Paterno</th>
+                                        <th>Apellido Materno</th>
+                                        <th>Teléfono</th>
+                                        <th>CI</th>
+                                        <th>Item</th>
+                                        <th>Fecha de Nacimiento</th>
+                                        <th>Genero</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for entidad in object_list %}
+                                    {% for user in object_list %}
                                     <tr>
-                                        <td><a href="{% url 'editar_entidad' entidad.pk %}">{{entidad.nombre}}</a> </td>
-                                        <td> {{entidad.encargado}} </td>
-                                        <td>
-                                            {% for miembro in entidad.miembros.all %}
-                                                <p>{{miembro}}</p>
-                                            {% endfor %}
-                                        </td>
+                                        <td><a href="{% url 'editar_profesor' user.id %}">{{user.user.username}}</a> </td>
+                                        <td> {{user.nombres}} </td>
+                                        <td> {{user.apellido_paterno}} </td>
+                                        <td> {{user.apellido_materno}} </td>
+                                        <td> {{user.numero_telefonico}} </td>
+                                        <td> {{user.carnet_identidad}} </td>
+                                        <td> {{user.item}} </td>
+                                        <td> {{user.fecha_nacimiento}} </td>
+                                        <td> {{user.get_genero_display}} </td>
                                     </tr>
 
                                     {% endfor %}

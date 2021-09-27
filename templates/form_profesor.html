@@ -1,19 +1,23 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block css %}
+<!--<link href="{% static 'css/plugins/sweetalert/sweetalert.css' %}" rel="stylesheet">-->
 {% endblock %}
 {% block cuerpo %}
 
     <div class="row wrapper border-bottom white-bg page-heading">
-        <div class="col-sm-4">
-            <h2>Eliminar Director</h2>
+        <div class="col-sm-12">
+            <h2>{% if editar %}Editar{% else %}Crear{% endif %} Profesor</h2>
             <ol class="breadcrumb">
                 <li>
                     <a onclick="activar_spinner()" href="{% url 'panel' %}">Panel de Inicio</a>
                 </li>
                 <li class="active">
-                    <strong>Eliminar Director</strong>
+                    <strong>{% if editar %}Editar{% else %}Crear{% endif %} Profesor</strong>
                 </li>
+                {% if editar %}
+                    <div class="pull-right"><a href="{% url 'eliminar_profesor' profesor.user.pk %}" class="btn btn-sm btn-danger">Eliminar Profesor</a></div>
+                {% endif %}
             </ol>
         </div>
     </div>
@@ -23,7 +27,7 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-title">
-                        <h5>Eliminar Director</h5>
+                        <h5>{% if editar %}Editar{% else %}Crear{% endif %} Profesor</h5>
                         <div class="ibox-tools">
                             <a class="collapse-link">
                                 <i class="fa fa-chevron-up"></i>
@@ -32,21 +36,20 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
-                            <form method="post">{% csrf_token %}
-                                <div class="row">
-                                    <div class="col-lg-8 col-lg-offset-2">
-                                        <p>Esta seguro de que quiere eliminar a este Director "{{ object }}"?</p>
-                                        <div class="row">
-                                            <div class="col-lg-6">
-                                                <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">Eliminar Director</button>
-                                            </div>
-                                            <div class="col-lg-6">
-                                                <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'lista_directores' %}">Cancelar</a>
-                                            </div>
+                            <div class="col-lg-8 col-lg-offset-2">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <button onclick="activar_spinner_form()" type="submit" class="btn btn-primary block full-width m-b">{% if editar %}Editar{% else %}Crear{% endif %} Profesor</button>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'lista_profesores' %}">Cancelar</a>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -56,6 +59,7 @@
 
 {% endblock %}
 {% block js %}
+<!--    <script src="{% static 'js/plugins/sweetalert/sweetalert.min.js' %}"></script>-->
     <script>
         $(document).ready(function () {
             $('input').attr("class", "form-control");

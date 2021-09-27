@@ -5,7 +5,7 @@ from django.contrib.auth.models import User, Group
 from hashlib import sha1
 
 # Create your views here.
-from django.views.generic import TemplateView, FormView, ListView, DeleteView
+from django.views.generic import TemplateView, FormView, ListView, DeleteView, UpdateView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -13,7 +13,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 
 from bigbluebutton.models import BBBMeeting
 from reunion.forms import CrearReunionForm, UnirmeForm, CrearUsuarioForm, CrearSalaForm, CrearDirectorForm, \
-    EditarDirectorForm, EntidadForm
+    EditarDirectorForm, EntidadForm, EditarProfesorForm, CrearProfesorForm
 from reunion.models import Sala, Usuario, Entidad
 
 
@@ -209,6 +209,15 @@ class EliminarDirector(DeleteView):
     template_name = "eliminar_director.html"
     success_url = "/panel/lista_directores"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "El director fue eliminado correctamente.")
+        return super(EliminarDirector, self).delete(request, *args, **kwargs)
+
 
 # ============== Entidades ========================
 
@@ -230,29 +239,31 @@ class CrearEntidadView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         form.save()
-        messages.success(self.request, 'Se creo una nueva entidad.')
+        messages.success(self.request, 'Se creo una nueva Entidad Educativa.')
         return super().form_valid(form)
 
-
-class EditarEntidadView(LoginRequiredMixin, FormView):
+class EditarEntidadView(LoginRequiredMixin, UpdateView):
     template_name = "form_entidad.html"
+    model = Entidad
     form_class = EntidadForm
     success_url = '/panel/lista_entidades'
 
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['nombre'] = self.object.nombre
+        initial['encargado'] = self.object.encargado
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        id_entidad = self.kwargs["id_entidad"]
+        id_entidad = self.kwargs["pk"]
         initial = get_object_or_404(Entidad, id=id_entidad)
-        print(initial.__dict__)
-        form = self.form_class(initial=initial.__dict__)
-        context['form'] = form
         context['editar'] = True
         context['entidad'] = initial
         return context
 
     def form_valid(self, form):
-        form.save()
-        messages.success(self.request, 'La entidad se edito correctamente.')
+        messages.success(self.request, 'La Entidad Educativa se edito correctamente.')
         return super().form_valid(form)
 
 
@@ -261,8 +272,87 @@ class EliminarEntidad(DeleteView):
     template_name = "eliminar_entidad.html"
     success_url = "/panel/lista_entidades"
 
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "La Entidad Educativa fue eliminada correctamente.")
+        return super(EliminarEntidad, self).delete(request, *args, **kwargs)
 
-# ==============
+
+# ============== Profesores =======================
+
+
+class ListaProfesoresView(ListView):
+    model = Usuario
+    template_name = "lista_profesores.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_list'] = Usuario.objects.filter(user__groups__name="Profesor")
+        return context
+
+
+class CrearProfesorView(LoginRequiredMixin, FormView):
+    template_name = "form_profesor.html"
+    form_class = CrearProfesorForm
+    success_url = '/panel/lista_profesores'
+
+    def form_valid(self, form):
+        form_data = form.cleaned_data
+        usuario = form_data['usuario']
+        password = form_data['password']
+        user = User.objects.create_user(
+            username=usuario,
+            email="",
+            password=password
+        )
+        user.groups.add(Group.objects.get(name="Profesor"))
+        usuario = Usuario.objects.create(user=user)
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se creo un nuevo profesor.')
+        return super().form_valid(form)
+
+
+class EditarProfesorView(LoginRequiredMixin, FormView):
+    template_name = "form_profesor.html"
+    form_class = EditarProfesorForm
+    success_url = '/panel/lista_profesores'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id_profesor = self.kwargs["id_profesor"]
+        initial = get_object_or_404(Usuario, id=id_profesor)
+        form = self.form_class(initial=initial.__dict__)
+        context['form'] = form
+        context['editar'] = True
+        context['profesor'] = initial
+        return context
+
+    def form_valid(self, form):
+        id_profesor = self.kwargs["id_profesor"]
+        usuario = get_object_or_404(Usuario, id=id_profesor)
+        form_data = form.cleaned_data
+        usuario.__dict__.update(form_data)
+        usuario.save()
+        messages.success(self.request, 'Se edito correctamente al usuario profesor.')
+        return super().form_valid(form)
+
+
+class EliminarProfesor(DeleteView):
+    model = User
+    template_name = "eliminar_profesor.html"
+    success_url = "/panel/lista_profesores"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user'] = self.request.user
+        return context
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "El profesor fue eliminado correctamente.")
+        return super(EliminarProfesor, self).delete(request, *args, **kwargs)
+
+
+# ============
 
 
 class CrearSalaView(FormView):
