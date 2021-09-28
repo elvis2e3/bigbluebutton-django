@@ -1,10 +1,10 @@
 from django.urls import path
 
 from reunion.views import IndexView, LoginView, PanelView, CrearReunionView, LogoutView, UnirmeView, ReunionLibreView, \
-    DetalleView, ListaSalaView, ListaEstudiantesView, CrearEstudianteView, CrearSalaView, ListaDirectoresView, \
+    DetalleView, ListaEstudiantesView, CrearEstudianteView, CrearSalaView, ListaDirectoresView, \
     CrearDirectorView, EditarDirectorView, EliminarDirector, ListaEntidadesView, CrearEntidadView, EliminarEntidad, \
     EditarEntidadView, ListaProfesoresView, CrearProfesorView, EditarProfesorView, EliminarProfesor, \
-    EditarEstudianteView, EliminarEstudiante
+    EditarEstudianteView, EliminarEstudiante, EditarSalaView, EliminarSala, ListaSalasView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -31,13 +31,14 @@ urlpatterns = [
     path('panel/crear_profesor', CrearProfesorView.as_view(), name='crear_profesor'),
     path('panel/editar_profesor/<int:id_profesor>', EditarProfesorView.as_view(), name='editar_profesor'),
     path('panel/eliminar_profesor/<pk>/', EliminarProfesor.as_view(), name='eliminar_profesor'),
-    # ============ Estudiante =======================
+    # ============ Estudiantes =======================
     path('panel/lista_estudiantes', ListaEstudiantesView.as_view(), name='lista_estudiantes'),
     path('panel/crear_estudiante', CrearEstudianteView.as_view(), name='crear_estudiante'),
     path('panel/editar_estudiante/<int:id_estudiante>', EditarEstudianteView.as_view(), name='editar_estudiante'),
     path('panel/eliminar_estudiante/<pk>/', EliminarEstudiante.as_view(), name='eliminar_estudiante'),
-    # ============
-    path('panel/lista_sala', ListaSalaView.as_view(), name='lista_sala'),
+    # ============ Salas ============================
+    path('panel/lista_salas', ListaSalasView.as_view(), name='lista_salas'),
     path('panel/crear_sala', CrearSalaView.as_view(), name='crear_sala'),
-
+    path('panel/editar_sala/<int:pk>', EditarSalaView.as_view(), name='editar_sala'),
+    path('panel/eliminar_sala/<pk>/', EliminarSala.as_view(), name='eliminar_sala'),
 ]

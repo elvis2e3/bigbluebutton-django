@@ -76,7 +76,7 @@
             <a href="#"><i class="fa fa-university"></i> <span class="nav-label">Aulas</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 {% if perms.reunion.view_sala %}
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_sala' %}">Lista de Aulas</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_salas' %}">Lista de Aulas</a></li>
                 {% endif %}
                 {% if perms.reunion.add_sala %}
                     <li><a onclick="activar_spinner()" href="{% url 'crear_sala' %}">Crear Aulas</a></li>

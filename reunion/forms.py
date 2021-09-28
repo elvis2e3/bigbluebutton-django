@@ -64,7 +64,6 @@ class EntidadForm(forms.ModelForm):
 
     class Meta:
         model = Entidad
-        miembros = forms.ChoiceField(required=False)
         fields = ('nombre', "encargado", "miembros")
 
     def __init__(self, *args, **kwargs):
@@ -136,19 +135,21 @@ class CrearEstudianteForm(EditarEstudianteForm):
         return usuario
 
 
-# ================
+# ================ Sala =========================
 
 
-class CrearSalaForm(forms.ModelForm):
-    nombre = forms.CharField(label="Nombre de aula")
+class SalaForm(forms.ModelForm):
 
     class Meta:
         model = Sala
-        fields = ('nombre', "miembros")
+        fields = ('nombre', "miembros", "entidad")
 
     def __init__(self, *args, **kwargs):
-        super(CrearSalaForm, self).__init__(*args, **kwargs)
-        self.fields["miembros"].queryset = User.objects.filter(groups__name='estudiante')
+        super(SalaForm, self).__init__(*args, **kwargs)
+        self.fields['miembros'].queryset = Usuario.objects.filter(user__groups__name__in=("Estudiante", "Profesor"))
+        self.fields['miembros'].required = False
+
+
 
 
 # class CrearSalaForm(forms.ModelForm):

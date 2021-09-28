@@ -12,8 +12,9 @@ from django.contrib import messages
 from django.shortcuts import redirect, render, get_object_or_404
 
 from bigbluebutton.models import BBBMeeting
-from reunion.forms import CrearReunionForm, UnirmeForm, CrearSalaForm, CrearDirectorForm, \
-    EditarDirectorForm, EntidadForm, EditarProfesorForm, CrearProfesorForm, EditarEstudianteForm, CrearEstudianteForm
+from reunion.forms import CrearReunionForm, UnirmeForm, CrearDirectorForm, \
+    EditarDirectorForm, EntidadForm, EditarProfesorForm, CrearProfesorForm, EditarEstudianteForm, CrearEstudianteForm, \
+    SalaForm
 from reunion.models import Sala, Usuario, Entidad
 
 
@@ -451,25 +452,97 @@ class EliminarEstudiante(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
         return super(EliminarEstudiante, self).delete(request, *args, **kwargs)
 
 
-# ==============
+# ============== Salas ==============================
 
 
-class CrearSalaView(FormView):
-    form_class = CrearSalaForm
-    template_name = "crear_aula.html"
-    success_url = '/panel/lista_aula'
+class ListaSalasView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = Sala
+    template_name = "lista_salas.html"
+    permission_required = 'reunion.view_sala'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if self.request.user.groups.all()[0].name=="Admin":
+            context['object_list'] = Sala.objects.all()
+        elif self.request.user.groups.all()[0].name=="Director":
+            context['object_list'] = Sala.objects.filter(encargado__user=self.request.user)
+        elif self.request.user.groups.all()[0].name=="Profesor":
+            context['object_list'] = Sala.objects.filter(miembros__user=self.request.user)
+        else:
+            context['object_list'] = []
+        return context
+
+
+class CrearSalaView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
+    template_name = "form_sala.html"
+    form_class = SalaForm
+    success_url = '/panel/lista_salas'
+    permission_required = 'reunion.add_sala'
 
     def form_valid(self, form):
         form.instance.moderador = self.request.user
         form.save()
+        messages.success(self.request, 'Se creo una nueva Sala Educativa.')
         return super().form_valid(form)
+
+
+class EditarSalaView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    template_name = "form_sala.html"
+    model = Sala
+    form_class = SalaForm
+    success_url = '/panel/lista_salas'
+    permission_required = 'reunion.change_sala'
+
+    def get_initial(self):
+        initial = super().get_initial()
+        initial['nombre'] = self.object.nombre
+        initial['encargado'] = self.object.encargado
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        id_sala = self.kwargs["pk"]
+        initial = get_object_or_404(Sala, id=id_sala)
+        context['editar'] = True
+        context['sala'] = initial
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'La Sala Educativa se edito correctamente.')
+        return super().form_valid(form)
+
+
+class EliminarSala(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Sala
+    template_name = "eliminar_sala.html"
+    success_url = "/panel/lista_salas"
+    permission_required = 'reunion.delete_sala'
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "La Sala Educativa fue eliminada correctamente.")
+        return super(EliminarSala, self).delete(request, *args, **kwargs)
+
+
+
+# class CrearSalaView(FormView):
+#     form_class = CrearSalaForm
+#     template_name = "crear_aula.html"
+#     success_url = '/panel/lista_aula'
+#
+#     def form_valid(self, form):
+#         form.instance.moderador = self.request.user
+#         form.save()
+#         return super().form_valid(form)
+#
+#
+# class ListaSalaView(ListView):
+#     model = Sala
+#     template_name = "lista_salas.html"
+
+
+# ==============
 
 
 class DetalleView(TemplateView):
     template_name = "detalle_reunion.html"
-
-
-class ListaSalaView(ListView):
-    model = Sala
-    template_name = "lista_aulas.html"
 
