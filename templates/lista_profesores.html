@@ -64,7 +64,13 @@
                                     <tbody>
                                     {% for user in object_list %}
                                     <tr>
-                                        <td><a href="{% url 'editar_profesor' user.id %}">{{user.user.username}}</a> </td>
+                                        <td>
+                                            {% if perms.reunion.change_profesor %}
+                                            <a href="{% url 'editar_profesor' user.id %}">{{user.user.username}}</a>
+                                            {% else %}
+                                                {{user.user.username}}
+                                            {% endif %}
+                                        </td>
                                         <td> {{user.nombres}} </td>
                                         <td> {{user.apellido_paterno}} </td>
                                         <td> {{user.apellido_materno}} </td>

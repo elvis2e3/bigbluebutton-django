@@ -70,7 +70,7 @@ class EntidadForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EntidadForm, self).__init__(*args, **kwargs)
         self.fields['encargado'].queryset = Usuario.objects.filter(user__groups__name="Director")
-        self.fields['miembros'].queryset = Usuario.objects.filter(user__groups__name="Estudiante")
+        self.fields['miembros'].queryset = Usuario.objects.filter(user__groups__name__in=("Estudiante", "Profesor"))
         self.fields['miembros'].required = False
 
 

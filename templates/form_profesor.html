@@ -16,7 +16,9 @@
                     <strong>{% if editar %}Editar{% else %}Crear{% endif %} Profesor</strong>
                 </li>
                 {% if editar %}
-                    <div class="pull-right"><a href="{% url 'eliminar_profesor' profesor.user.pk %}" class="btn btn-sm btn-danger">Eliminar Profesor</a></div>
+                    {% if perms.reunion.delete_profesor %}
+                        <div class="pull-right"><a href="{% url 'eliminar_profesor' profesor.user.pk %}" class="btn btn-sm btn-danger">Eliminar Profesor</a></div>
+                    {% endif %}
                 {% endif %}
             </ol>
         </div>

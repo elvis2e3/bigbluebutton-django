@@ -22,9 +22,9 @@ class Command(BaseCommand):
             "change_estudiante",
             "delete_estudiante",
             "view_profesor",
+            "view_entidad",
         ] + lista_id_permisos_para_estudiante
         lista_id_permisos_para_director = [
-            "view_entidad",
             "change_entidad",
             "add_profesor",
             "change_profesor",

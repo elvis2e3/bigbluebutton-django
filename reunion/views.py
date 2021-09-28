@@ -237,6 +237,8 @@ class ListaEntidadesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
             context['object_list'] = Entidad.objects.all()
         elif self.request.user.groups.all()[0].name=="Director":
             context['object_list'] = Entidad.objects.filter(encargado__user=self.request.user)
+        elif self.request.user.groups.all()[0].name=="Profesor":
+            context['object_list'] = Entidad.objects.filter(miembros__user=self.request.user)
         else:
             context['object_list'] = []
         return context
