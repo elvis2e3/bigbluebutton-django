@@ -12,7 +12,7 @@
                         {% endif %}
                     </span>
                     <br>
-                    <strong class="font-bold" style="color: white">{{user.first_name}} {{user.last_name}}</strong>
+                    <strong class="font-bold" style="color: white">{{user.usuario.nombres}} {{user.usuario.apellido_paterno}} {{user.usuario.apellido_materno}}</strong>
                 </div>
             {% else %}
                 <div class="dropdown profile-element">
@@ -38,10 +38,10 @@
         <li class="active">
             <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Estudiantes</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
-                {% if perms.reunion.view_usuario %}
+                {% if perms.reunion.view_estudiante %}
                     <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Estudintes</a></li>
                 {% endif %}
-                {% if perms.reunion.add_usuario %}
+                {% if perms.reunion.add_estudiante %}
                     <li><a onclick="activar_spinner()" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
                 {% endif %}
             </ul>
@@ -50,8 +50,12 @@
             <li class="active">
                 <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Profesores</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_profesores' %}">Lista de Profesores</a></li>
-                    <li><a onclick="activar_spinner()" href="{% url 'crear_profesor' %}">Crear Profesor</a></li>
+                    {% if perms.reunion.view_profesor %}
+                        <li><a onclick="activar_spinner()" href="{% url 'lista_profesores' %}">Lista de Profesores</a></li>
+                    {% endif %}
+                    {% if perms.reunion.add_profesor %}
+                        <li><a onclick="activar_spinner()" href="{% url 'crear_profesor' %}">Crear Profesor</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}
@@ -59,8 +63,12 @@
             <li class="active">
                 <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Directores</span><span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_directores' %}">Lista de Directores</a></li>
-                    <li><a onclick="activar_spinner()" href="{% url 'crear_director' %}">Crear Director</a></li>
+                    {% if perms.reunion.view_director %}
+                        <li><a onclick="activar_spinner()" href="{% url 'lista_directores' %}">Lista de Directores</a></li>
+                    {% endif %}
+                    {% if perms.reunion.add_director %}
+                        <li><a onclick="activar_spinner()" href="{% url 'crear_director' %}">Crear Director</a></li>
+                    {% endif %}
                 </ul>
             </li>
         {% endif %}

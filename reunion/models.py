@@ -27,6 +27,22 @@ class Usuario(models.Model):
     def __str__(self):
           return "(%s) %s %s %s" % (self.user, self.nombres, self.apellido_paterno, self.apellido_materno)
 
+    class Meta:
+        permissions = [
+            ('add_director', 'Crear Director'),
+            ('change_director', 'Editar Director'),
+            ('delete_director', 'Eliminar Director'),
+            ('view_director', 'Listar Directores'),
+            ('add_profesor', 'Crear Profesor'),
+            ('change_profesor', 'Editar Profesor'),
+            ('delete_profesor', 'Eliminar Profesor'),
+            ('view_profesor', 'Listar Profesores'),
+            ('add_estudiante', 'Crear Estudiante'),
+            ('change_estudiante', 'Editar Estudiante'),
+            ('delete_estudiante', 'Eliminar Estudiante'),
+            ('view_estudiante', 'Listar Estudiantes'),
+        ]
+
 
 class Entidad(models.Model):
     nombre = models.CharField(max_length=100)

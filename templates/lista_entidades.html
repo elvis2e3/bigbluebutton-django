@@ -58,7 +58,13 @@
                                     <tbody>
                                     {% for entidad in object_list %}
                                     <tr>
-                                        <td><a href="{% url 'editar_entidad' entidad.pk %}">{{entidad.nombre}}</a> </td>
+                                        <td>
+                                            {% if perms.reunion.change_entidad %}
+                                                <a href="{% url 'editar_entidad' entidad.pk %}">{{entidad.nombre}}</a>
+                                            {% else %}
+                                                {{entidad.nombre}}
+                                            {% endif %}
+                                        </td>
                                         <td> {{entidad.encargado}} </td>
                                         <td>
                                             {% for miembro in entidad.miembros.all %}

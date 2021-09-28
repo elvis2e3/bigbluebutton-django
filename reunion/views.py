@@ -1,5 +1,5 @@
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.views import LoginView as LoginViewDjango, LogoutView as LogoutViewDjango
 from django.contrib.auth.models import User, Group
 from hashlib import sha1
@@ -147,9 +147,10 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
 # ============== Directores =======================
 
 
-class ListaDirectoresView(ListView):
+class ListaDirectoresView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Usuario
     template_name = "lista_directores.html"
+    permission_required = 'reunion.view_director'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,10 +158,11 @@ class ListaDirectoresView(ListView):
         return context
 
 
-class CrearDirectorView(LoginRequiredMixin, FormView):
+class CrearDirectorView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "form_director.html"
     form_class = CrearDirectorForm
     success_url = '/panel/lista_directores'
+    permission_required = 'reunion.add_director'
 
     def form_valid(self, form):
         form_data = form.cleaned_data
@@ -179,10 +181,11 @@ class CrearDirectorView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class EditarDirectorView(LoginRequiredMixin, FormView):
+class EditarDirectorView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "form_director.html"
     form_class = EditarDirectorForm
     success_url = '/panel/lista_directores'
+    permission_required = 'reunion.change_director'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -204,10 +207,11 @@ class EditarDirectorView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class EliminarDirector(DeleteView):
+class EliminarDirector(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = User
     template_name = "eliminar_director.html"
     success_url = "/panel/lista_directores"
+    permission_required = 'reunion.delete_director'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -222,9 +226,10 @@ class EliminarDirector(DeleteView):
 # ============== Entidades ========================
 
 
-class ListaEntidadesView(ListView):
+class ListaEntidadesView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Entidad
     template_name = "lista_entidades.html"
+    permission_required = 'reunion.view_entidad'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -237,21 +242,23 @@ class ListaEntidadesView(ListView):
         return context
 
 
-class CrearEntidadView(LoginRequiredMixin, FormView):
+class CrearEntidadView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "form_entidad.html"
     form_class = EntidadForm
     success_url = '/panel/lista_entidades'
+    permission_required = 'reunion.add_entidad'
 
     def form_valid(self, form):
         form.save()
         messages.success(self.request, 'Se creo una nueva Entidad Educativa.')
         return super().form_valid(form)
 
-class EditarEntidadView(LoginRequiredMixin, UpdateView):
+class EditarEntidadView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = "form_entidad.html"
     model = Entidad
     form_class = EntidadForm
     success_url = '/panel/lista_entidades'
+    permission_required = 'reunion.change_entidad'
 
     def get_initial(self):
         initial = super().get_initial()
@@ -272,10 +279,11 @@ class EditarEntidadView(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class EliminarEntidad(DeleteView):
+class EliminarEntidad(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Entidad
     template_name = "eliminar_entidad.html"
     success_url = "/panel/lista_entidades"
+    permission_required = 'reunion.delete_entidad'
 
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, "La Entidad Educativa fue eliminada correctamente.")
@@ -285,9 +293,10 @@ class EliminarEntidad(DeleteView):
 # ============== Profesores =======================
 
 
-class ListaProfesoresView(ListView):
+class ListaProfesoresView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Usuario
     template_name = "lista_profesores.html"
+    permission_required = 'reunion.view_profesor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -295,10 +304,11 @@ class ListaProfesoresView(ListView):
         return context
 
 
-class CrearProfesorView(LoginRequiredMixin, FormView):
+class CrearProfesorView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "form_profesor.html"
     form_class = CrearProfesorForm
     success_url = '/panel/lista_profesores'
+    permission_required = 'reunion.add_profesor'
 
     def form_valid(self, form):
         form_data = form.cleaned_data
@@ -317,10 +327,11 @@ class CrearProfesorView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class EditarProfesorView(LoginRequiredMixin, FormView):
+class EditarProfesorView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     template_name = "form_profesor.html"
     form_class = EditarProfesorForm
     success_url = '/panel/lista_profesores'
+    permission_required = 'reunion.change_profesor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -342,10 +353,11 @@ class EditarProfesorView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class EliminarProfesor(DeleteView):
+class EliminarProfesor(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = User
     template_name = "eliminar_profesor.html"
     success_url = "/panel/lista_profesores"
+    permission_required = 'reunion.delete_profesor'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         lista_id_permisos_para_estudiante = [
-            "view_usuario",
+            "view_estudiante",
             "view_bbbmeeting",
             "view_sala",
         ]
@@ -18,12 +18,26 @@ class Command(BaseCommand):
             "add_sala",
             "change_sala",
             "delete_sala",
-            "add_usuario",
-            "change_usuario",
-            "delete_usuario",
+            "add_estudiante",
+            "change_estudiante",
+            "delete_estudiante",
+            "view_profesor",
         ] + lista_id_permisos_para_estudiante
-        lista_id_permisos_para_director = ["view_entidad", "change_entidad"] + lista_id_permisos_para_profesor
-        lista_id_permisos_para_admin = ["add_entidad", "delete_entidad"] + lista_id_permisos_para_director
+        lista_id_permisos_para_director = [
+            "view_entidad",
+            "change_entidad",
+            "add_profesor",
+            "change_profesor",
+            "delete_profesor",
+            "view_director"
+        ] + lista_id_permisos_para_profesor
+        lista_id_permisos_para_admin = [
+            "add_entidad",
+            "delete_entidad",
+            "add_director",
+            "change_director",
+            "delete_director",
+        ] + lista_id_permisos_para_director
         estudiante = Group.objects.create(
             name="Estudiante"
         )
