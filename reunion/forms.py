@@ -105,20 +105,38 @@ class CrearProfesorForm(EditarProfesorForm):
         return usuario
 
 
+# ================ Estudiantes =========================
+
+
+class EditarEstudianteForm(forms.Form):
+    nombres = forms.CharField(label="Nombre *")
+    apellido_paterno = forms.CharField(label="Apellido paterno", required=False)
+    apellido_materno = forms.CharField(label="Apellido materno", required=False)
+    numero_telefonico = forms.IntegerField(label="Número telefónico", required=False)
+    carnet_identidad = forms.CharField(label="Carnet de identidad", required=False)
+    genero = forms.ChoiceField(label="Genero", widget=forms.Select(), required=False)
+    fecha_nacimiento = forms.DateField(label="Fecha de nacimiento", widget=forms.DateInput, required=False)
+    rude = forms.IntegerField(label="Rude", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(forms.Form, self).__init__(*args, **kwargs)
+        self.fields['genero'].choices = Usuario.CHOICES_GENERO
+        self.fields['numero_telefonico'].initial = 0
+        self.fields['rude'].initial = 0
+
+
+class CrearEstudianteForm(EditarEstudianteForm):
+    usuario = forms.CharField(label="Nombre de usuario *")
+    password = forms.CharField(label="Contraseña de usuario *", widget=forms.PasswordInput)
+
+    def clean_usuario(self):
+        usuario = self.cleaned_data['usuario']
+        if len(User.objects.filter(username=usuario)) > 0:
+            raise forms.ValidationError("El nombre del usuario ya esta registrado, intente con otro nombre por favor!")
+        return usuario
+
+
 # ================
-
-
-class CrearUsuarioForm(forms.ModelForm):
-    username = forms.RegexField(regex=r'^[\w.@+-]+$', max_length=30, label='Nombre de Usuario')
-    email = forms.EmailField(label="Correo electrónico")
-    first_name = forms.CharField(label='Nombres')
-    last_name = forms.CharField(label='Apellidos')
-    password1 = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
-    password2 = forms.CharField(widget=forms.PasswordInput, label="Confirmar Contraseña")
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
 
 
 class CrearSalaForm(forms.ModelForm):

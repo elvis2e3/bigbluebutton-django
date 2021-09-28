@@ -32,26 +32,53 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.tags == 'success' %}
+                                        <div class="alert alert-success alert-dismissable">
+                                    {% else %}
+                                        <div class="alert alert-warning alert-dismissable">
+                                    {% endif %}
+                                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                            {{ message }}
+                                        </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="row">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Username</th>
                                         <th>Nombre Completo</th>
-                                        <th>Correo</th>
-                                        <th>Rol</th>
-
+                                        <th>Apellido Paterno</th>
+                                        <th>Apellido Materno</th>
+                                        <th>Teléfono</th>
+                                        <th>CI</th>
+                                        <th>Rude</th>
+                                        <th>Fecha de Nacimiento</th>
+                                        <th>Genero</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for user in object_list %}
-
                                     <tr>
-                                        <!--                                                <td>{{meetingdb.meetingID}}</td>-->
-                                        <td> {{user.username}} </td>
-                                        <td> {{user.first_name}} {{user.last_name}} </td>
-                                        <td> {{user.email}} </td>
-                                        <td> {{user.groups.all.0}} </td>
+                                        <td>
+                                            {% if perms.reunion.change_estudiante %}
+                                            <a href="{% url 'editar_estudiante' user.id %}">{{user.user.username}}</a>
+                                            {% else %}
+                                                {{user.user.username}}
+                                            {% endif %}
+                                        </td>
+                                        <td> {{user.nombres}} </td>
+                                        <td> {{user.apellido_paterno}} </td>
+                                        <td> {{user.apellido_materno}} </td>
+                                        <td> {{user.numero_telefonico}} </td>
+                                        <td> {{user.carnet_identidad}} </td>
+                                        <td> {{user.rude}} </td>
+                                        <td> {{user.fecha_nacimiento}} </td>
+                                        <td> {{user.get_genero_display}} </td>
                                     </tr>
 
                                     {% endfor %}

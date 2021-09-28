@@ -39,7 +39,7 @@
             <a href="#"><i class="fa fa-users"></i> <span class="nav-label">Estudiantes</span><span class="fa arrow"></span></a>
             <ul class="nav nav-second-level">
                 {% if perms.reunion.view_estudiante %}
-                    <li><a onclick="activar_spinner()" href="{% url 'lista_estudiante' %}">Lista de Estudintes</a></li>
+                    <li><a onclick="activar_spinner()" href="{% url 'lista_estudiantes' %}">Lista de Estudintes</a></li>
                 {% endif %}
                 {% if perms.reunion.add_estudiante %}
                     <li><a onclick="activar_spinner()" href="{% url 'crear_estudiante' %}">Crear Estudiante</a></li>
