@@ -228,7 +228,12 @@ class ListaEntidadesView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = Entidad.objects.all()
+        if self.request.user.groups.all()[0].name=="Admin":
+            context['object_list'] = Entidad.objects.all()
+        elif self.request.user.groups.all()[0].name=="Director":
+            context['object_list'] = Entidad.objects.filter(encargado__user=self.request.user)
+        else:
+            context['object_list'] = []
         return context
 
 

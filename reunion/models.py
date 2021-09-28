@@ -51,6 +51,12 @@ class Sala(models.Model):
         related_name='moderador',
         db_column='moderador',
     )
+    entidad = models.ForeignKey(
+        Entidad,
+        on_delete=models.CASCADE,
+        related_name='entidad',
+        db_column='entidad',
+    )
 
     def __str__(self):
         return self.nombre

@@ -17,7 +17,9 @@
                     <strong>{% if editar %}Editar{% else %}Crear{% endif %} Entidad</strong>
                 </li>
                 {% if editar %}
-                    <div class="pull-right"><a href="{% url 'eliminar_entidad' entidad.pk %}" class="btn btn-sm btn-danger">Eliminar Entidad</a></div>
+                    {% if perms.reunion.delete_entidad %}
+                        <div class="pull-right"><a href="{% url 'eliminar_entidad' entidad.pk %}" class="btn btn-sm btn-danger">Eliminar Entidad</a></div>
+                    {% endif %}
                 {% endif %}
             </ol>
         </div>
