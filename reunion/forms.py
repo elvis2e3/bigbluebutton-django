@@ -142,7 +142,7 @@ class SalaForm(forms.ModelForm):
 
     class Meta:
         model = Sala
-        fields = ('nombre', "miembros", "entidad")
+        fields = ('nombre', "entidad", "miembros",)
 
     def __init__(self, *args, **kwargs):
         super(SalaForm, self).__init__(*args, **kwargs)

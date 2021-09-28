@@ -462,14 +462,15 @@ class ListaSalasView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.groups.all()[0].name=="Admin":
+        if self.request.user.groups.all()[0].name == "Admin":
             context['object_list'] = Sala.objects.all()
-        elif self.request.user.groups.all()[0].name=="Director":
-            context['object_list'] = Sala.objects.filter(encargado__user=self.request.user)
-        elif self.request.user.groups.all()[0].name=="Profesor":
-            context['object_list'] = Sala.objects.filter(miembros__user=self.request.user)
+        elif self.request.user.groups.all()[0].name == "Director":
+            entidades = Entidad.objects.filter(encargado__user=self.request.user)
+            context['object_list'] = Sala.objects.filter(entidad__in=entidades)
+        elif self.request.user.groups.all()[0].name == "Profesor":
+            context['object_list'] = Sala.objects.filter(moderador__user=self.request.user)
         else:
-            context['object_list'] = []
+            context['object_list'] = Sala.objects.filter(miembros__user=self.request.user)
         return context
 
 
@@ -479,8 +480,22 @@ class CrearSalaView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
     success_url = '/panel/lista_salas'
     permission_required = 'reunion.add_sala'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            if self.request.user.groups.all()[0].name == "Director":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                context["form"].fields["entidad"].queryset = Entidad.objects.filter(encargado=usaurio)
+            elif self.request.user.groups.all()[0].name != "Admin":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                context["form"].fields["entidad"].queryset = Entidad.objects.filter(miembros__in=(usaurio,))
+        except:
+            pass
+        return context
+
     def form_valid(self, form):
-        form.instance.moderador = self.request.user
+        usuario = Usuario.objects.get(user=self.request.user)
+        form.instance.moderador = usuario
         form.save()
         messages.success(self.request, 'Se creo una nueva Sala Educativa.')
         return super().form_valid(form)
@@ -496,7 +511,8 @@ class EditarSalaView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     def get_initial(self):
         initial = super().get_initial()
         initial['nombre'] = self.object.nombre
-        initial['encargado'] = self.object.encargado
+        initial['moderador'] = self.object.moderador
+        initial['entidad'] = self.object.entidad
         return initial
 
     def get_context_data(self, **kwargs):
@@ -519,7 +535,7 @@ class EliminarSala(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     permission_required = 'reunion.delete_sala'
 
     def delete(self, request, *args, **kwargs):
-        messages.success(self.request, "La Sala Educativa fue eliminada correctamente.")
+        messages.success(self.request, "La Sala fue eliminada correctamente.")
         return super(EliminarSala, self).delete(request, *args, **kwargs)
 
 

@@ -32,12 +32,27 @@
                     </div>
                     <div class="ibox-content">
                         <div class="row">
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.tags == 'success' %}
+                                        <div class="alert alert-success alert-dismissable">
+                                    {% else %}
+                                        <div class="alert alert-warning alert-dismissable">
+                                    {% endif %}
+                                            <button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                                            {{ message }}
+                                        </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                        <div class="row">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                     <tr>
                                         <th>Nombre</th>
                                         <th>Moderador</th>
+                                        <th>Entidad</th>
                                         <th>Miembros</th>
                                     </tr>
                                     </thead>
@@ -45,12 +60,18 @@
                                     {% for aula in object_list %}
 
                                     <tr>
-                                        <!--                                                <td>{{meetingdb.meetingID}}</td>-->
-                                        <td> {{aula.nombre}} </td>
+                                        <td>
+                                            {% if perms.reunion.change_sala %}
+                                                <a href="{% url 'editar_sala' aula.pk %}">{{aula.nombre}}</a>
+                                            {% else %}
+                                                {{aula.nombre}}
+                                            {% endif %}
+                                        </td>
                                         <td> {{aula.moderador}}</td>
+                                        <td> {{aula.entidad}}</td>
                                         <td>
                                             {% for miembro in aula.miembros.all %}
-                                                <p>{{miembro.first_name}} {{miembro.last_name}}</p>
+                                                <p>{{miembro}}</p>
                                             {% endfor %}
                                         </td>
                                     </tr>

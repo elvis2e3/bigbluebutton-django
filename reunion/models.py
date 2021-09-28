@@ -60,9 +60,9 @@ class Entidad(models.Model):
 
 class Sala(models.Model):
     nombre = models.CharField(max_length=100)
-    miembros = models.ManyToManyField(User)
+    miembros = models.ManyToManyField(Usuario)
     moderador = models.ForeignKey(
-        User,
+        Usuario,
         on_delete=models.CASCADE,
         related_name='moderador',
         db_column='moderador',
