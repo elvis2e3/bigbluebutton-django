@@ -523,6 +523,17 @@ class EditarSalaView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         initial = get_object_or_404(Sala, id=id_sala)
         context['editar'] = True
         context['sala'] = initial
+        try:
+            if self.request.user.groups.all()[0].name == "Director":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                context["form"].fields["entidad"].queryset = Entidad.objects.filter(encargado=usaurio)
+            elif self.request.user.groups.all()[0].name != "Admin":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                context["form"].fields["entidad"].queryset = Entidad.objects.filter(miembros__in=(usaurio,))
+        except:
+            pass
+        print(initial.entidad)
+        context["form"].fields["miembros"].queryset = initial.entidad.miembros.all()
         return context
 
     def form_valid(self, form):
