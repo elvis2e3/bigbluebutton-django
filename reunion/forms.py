@@ -21,6 +21,21 @@ class CrearReunionForm(forms.ModelForm):
         }
 
 
+class CrearReunionSalaForm(forms.ModelForm):
+    class Meta:
+        model = BBBMeeting
+        fields = [
+            "name",
+            "salas",
+            "duration",
+        ]
+        labels = {
+            "name": "Nombre de la reunion",
+            "salas": "Aula",
+            "duration": "Duracion de la reunion (min)"
+        }
+
+
 class UnirmeForm(forms.Form):
     nombre_usuario = forms.CharField()
     codigo_reunion = forms.CharField()
@@ -147,17 +162,3 @@ class SalaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SalaForm, self).__init__(*args, **kwargs)
         self.fields['miembros'].required = False
-
-
-
-
-# class CrearSalaForm(forms.ModelForm):
-#     nombre = forms.CharField(label="Nombre de aula")
-#
-#     class Meta:
-#         model = Sala
-#         fields = ('nombre', "miembros")
-#
-#     def __init__(self, *args, **kwargs):
-#         super(CrearSalaForm, self).__init__(*args, **kwargs)
-#         self.fields["miembros"].queryset = User.objects.filter(groups__name='estudiante')

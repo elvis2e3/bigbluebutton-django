@@ -15,7 +15,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from bigbluebutton.models import BBBMeeting
 from reunion.forms import CrearReunionForm, UnirmeForm, CrearDirectorForm, \
     EditarDirectorForm, EntidadForm, EditarProfesorForm, CrearProfesorForm, EditarEstudianteForm, CrearEstudianteForm, \
-    SalaForm
+    SalaForm, CrearReunionSalaForm
 from reunion.models import Sala, Usuario, Entidad
 
 
@@ -106,6 +106,33 @@ class PanelView(LoginRequiredMixin, TemplateView):
 class CrearReunionView(LoginRequiredMixin, FormView):
     template_name = "crear_reunion.html"
     form_class = CrearReunionForm
+    success_url = '/panel'
+
+    def form_valid(self, form):
+        user = self.request.user
+        group_name = user.groups.values_list('name', flat=True)[0]
+        form_data = form.cleaned_data
+        meeting_name = form_data['name']
+        meeting_duration = form_data['duration']
+        code = sha1((str(user.id) + " -" + meeting_name).encode('utf-8')).hexdigest()
+        BBBMeeting.objects.create(
+            name=meeting_name,
+            meetingID=code,
+            attendeePW="estudiante",
+            moderatorPW=group_name,
+            duration=meeting_duration,
+            record=True,
+            allowStartStopRecording=True,
+            welcome=meeting_name,
+            running=True
+        )
+        messages.success(self.request, 'Se creo una nueva reunion.')
+        return super().form_valid(form)
+
+
+class CrearReunionSalaView(LoginRequiredMixin, FormView):
+    template_name = "crear_reunion.html"
+    form_class = CrearReunionSalaForm
     success_url = '/panel'
 
     def form_valid(self, form):

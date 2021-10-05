@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib import messages
 
+from reunion.models import Sala
+
 
 def soup_api(req):
         source = request.urlopen(req).read()
@@ -45,6 +47,7 @@ class BBBMeeting(models.Model):
     allowStartStopRecording = models.BooleanField(blank=False, default=None)
     welcome = models.CharField(max_length=500, blank=False, default=None)
     running = models.BooleanField(blank=False, default=False)
+    salas = models.ManyToManyField(Sala)
 
     def __str__(self):
         return self.name

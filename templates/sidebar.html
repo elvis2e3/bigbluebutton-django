@@ -32,6 +32,9 @@
                 {% if perms.bigbluebutton.add_bbbmeeting %}
                     <li><a onclick="activar_spinner()" href="{% url 'crear_reunion' %}">Crear Reunión</a></li>
                 {% endif %}
+                {% if perms.bigbluebutton.add_bbbmeeting %}
+                    <li><a onclick="activar_spinner()" href="{% url 'crear_reunion_por_aula' %}">Crear Reunión por Aula</a></li>
+                {% endif %}
                 <li><a onclick="activar_spinner()" href="{% url 'reunion_libre' %}">Unirme a una Reunión</a></li>
             </ul>
         </li>
