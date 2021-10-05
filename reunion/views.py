@@ -3,9 +3,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 from django.contrib.auth.views import LoginView as LoginViewDjango, LogoutView as LogoutViewDjango
 from django.contrib.auth.models import User, Group
 from hashlib import sha1
+from django.http import JsonResponse
 
 # Create your views here.
-from django.views.generic import TemplateView, FormView, ListView, DeleteView, UpdateView
+from django.views.generic import TemplateView, FormView, ListView, DeleteView, UpdateView, DetailView
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -491,6 +492,7 @@ class CrearSalaView(LoginRequiredMixin, PermissionRequiredMixin, FormView):
                 context["form"].fields["entidad"].queryset = Entidad.objects.filter(miembros__in=(usaurio,))
         except:
             pass
+        context["form"].fields["miembros"].queryset = Usuario.objects.filter(id=0)
         return context
 
     def form_valid(self, form):
@@ -534,27 +536,20 @@ class EliminarSala(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     success_url = "/panel/lista_salas"
     permission_required = 'reunion.delete_sala'
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, requTemplateViewest, *args, **kwargs):
         messages.success(self.request, "La Sala fue eliminada correctamente.")
-        return super(EliminarSala, self).delete(request, *args, **kwargs)
+        return super(EliminarSala, self).delete(self.request, *args, **kwargs)
 
 
-
-# class CrearSalaView(FormView):
-#     form_class = CrearSalaForm
-#     template_name = "crear_aula.html"
-#     success_url = '/panel/lista_aula'
-#
-#     def form_valid(self, form):
-#         form.instance.moderador = self.request.user
-#         form.save()
-#         return super().form_valid(form)
-#
-#
-# class ListaSalaView(ListView):
-#     model = Sala
-#     template_name = "lista_salas.html"
-
+class ListaMiembrosEntidadView(LoginRequiredMixin, DetailView):
+    def get(self, request, *args, **kwargs):
+        id_entidad = self.kwargs["pk"]
+        entidad = get_object_or_404(Entidad, pk=id_entidad)
+        usuarios = entidad.miembros.all()
+        miembros = {}
+        for usuario in usuarios:
+            miembros[usuario.id] = "%s %s %s" % (usuario.nombres, usuario.apellido_paterno, usuario.apellido_materno)
+        return JsonResponse({'miembros': miembros})
 
 # ==============
 

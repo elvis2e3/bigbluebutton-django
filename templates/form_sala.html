@@ -79,6 +79,10 @@
                 infoTextFiltered: '<span class="badge badge-warning">Filtrado</span> {0} de {1}',
                 infoTextEmpty: 'Lista vacia'
             });
+            $("#id_entidad").on('change',function (e) {
+                id_entidad = $(this).val();
+                get_miembros_entidad(id_entidad)
+            })
         });
         function activar_spinner_form(){
             duration = $("#id_duration").val();
@@ -91,6 +95,16 @@
                     backdrop: 'rgba(0,0,0,0.7)'
                 });
             }
+        }
+        function get_miembros_entidad(id_entidad){
+            $.get( "/panel/lista_miembros_entidad/" + id_entidad, function( data ) {
+                data = data.miembros
+                $("#id_miembros").find('option').remove();
+                Object.keys(data).forEach(function(key) {
+                    $("#id_miembros").append('<option value="' + key + '">' + data[key] + '</option>');
+                })
+                $("[name=miembros]").bootstrapDualListbox("refresh", true);
+            });
         }
     </script>
 {% endblock %}
