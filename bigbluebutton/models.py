@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib import messages
 
-from reunion.models import Sala
+from reunion.models import Sala, Usuario
 
 
 def soup_api(req):
@@ -48,6 +48,12 @@ class BBBMeeting(models.Model):
     welcome = models.CharField(max_length=500, blank=False, default=None)
     running = models.BooleanField(blank=False, default=False)
     salas = models.ManyToManyField(Sala)
+    moderador = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='moderador_reunion',
+        db_column='moderador_reunion',
+    )
 
     def __str__(self):
         return self.name

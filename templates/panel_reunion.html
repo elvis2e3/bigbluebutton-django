@@ -91,6 +91,7 @@
                                             <tr>
 <!--                                                <th>Código Reunión</th>-->
                                                 <th>Nombre</th>
+                                                {% if user.groups.all.0.name != "Estudiate" %}
                                                 <th>Estado</th>
                                                 <th>Detalle</th>
 

@@ -33,6 +33,43 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
+                                <p><strong>Nombre de la Runion: </strong>{{ object }}</p>
+                                <p><strong>Codigo de la Runion: </strong>{{ object.meetingID }}</p>
+                                <p><strong>Duracion de la Runion: </strong>{{ object.duration }} minutos</p>
+                                <p><strong>Moderador de la Runion: </strong>{{ object.moderador }}</p>
+                                {% if object.salas.all %}
+                                    <p><strong>Salas de la Runion: </strong>
+                                        {% for sala in object.salas.all %}
+                                            {{ sala }},
+                                        {% endfor %}</p>
+                                    <p><strong>Miembros de la Runion: </strong>
+                                        {% for sala in object.salas.all %}
+                                            {% for usuario in sala.miembros.all %}
+                                                {{ usuario }},
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Borrar de Reunión</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2">
                                 <p>Esta seguro de que quiere eliminar a esta reunion "{{ object }}"?</p>
                                 <form method="post">
                                     {% csrf_token %}

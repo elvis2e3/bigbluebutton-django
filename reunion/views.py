@@ -69,12 +69,6 @@ class LogoutView(LoginRequiredMixin, LogoutViewDjango):
     pass
 
 
-class DetalleView(LoginRequiredMixin, DeleteView):
-    template_name = "detalle_reunion.html"
-    model = BBBMeeting
-    success_url = "/panel"
-
-
 # ============== Reuniones ========================
 
 
@@ -83,27 +77,34 @@ class PanelView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(PanelView, self).get_context_data(**kwargs)
-
+        user = self.request.user
+        if user.groups.all()[0].name == "Estudiante":
+            salas = Sala.objects.filter(miembros=user.usuario)
+            reuniones = BBBMeeting.objects.filter(salas__in=salas).order_by('meetingID')
+            db_meeting = {}
+            for reunion in reuniones:
+                db_meeting[reunion.id] = reunion
+            db_meeting = db_meeting.values()
+        else:
+            db_meeting = BBBMeeting.objects.filter(moderador=user.usuario).order_by('meetingID')
         open_meetings = []
-        try:
-            bbb_meeting = BBBMeeting.get_meetings_list()
-        except:
-            messages.warning(self.request, 'Tenemos problemas de conexion.')
-            bbb_meeting = []
-        db_meeting = BBBMeeting.objects.all().order_by('meetingID')
-        filtro = []
 
-        bbb_meeting_dict = {}
-        for meet in bbb_meeting:
-            bbb_meeting_dict[meet['meetingID']] = meet
-            open_meetings.append(meet['meetingID'])
-
-        for meet in db_meeting:
-            if meet.meetingID in bbb_meeting_dict:
-                filtro.append(meet)
+        # try:
+        #     bbb_meeting = BBBMeeting.get_meetings_list()
+        # except:
+        #     messages.warning(self.request, 'Tenemos problemas de conexion.')
+        #     bbb_meeting = []
+        # filtro = []
+        # bbb_meeting_dict = {}
+        # for meet in bbb_meeting:
+        #     bbb_meeting_dict[meet['meetingID']] = meet
+        #     open_meetings.append(meet['meetingID'])
+        # for meet in db_meeting:
+        #     if meet.meetingID in bbb_meeting_dict:
+        #         filtro.append(meet)
+        # context['live_meetings'] = filtro
 
         context['open_meetings'] = open_meetings
-        context['live_meetings'] = filtro
         context['meetingsdb'] = db_meeting
 
         return context
@@ -113,6 +114,11 @@ class CrearReunionView(LoginRequiredMixin, FormView):
     template_name = "crear_reunion.html"
     form_class = CrearReunionForm
     success_url = '/panel'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"].fields["duration"].initial = 60
+        return context
 
     def form_valid(self, form):
         user = self.request.user
@@ -130,7 +136,8 @@ class CrearReunionView(LoginRequiredMixin, FormView):
             record=True,
             allowStartStopRecording=True,
             welcome=meeting_name,
-            running=True
+            running=True,
+            moderador=user.usuario
         )
         messages.success(self.request, 'Se creo una nueva reunion.')
         return super().form_valid(form)
@@ -154,6 +161,7 @@ class CrearReunionSalaView(LoginRequiredMixin, FormView):
                 context["form"].fields["salas"].queryset = Sala.objects.filter(moderador=usaurio)
         except:
             pass
+        context["form"].fields["duration"].initial = 60
         return context
 
     def form_valid(self, form):
@@ -173,7 +181,8 @@ class CrearReunionSalaView(LoginRequiredMixin, FormView):
             record=True,
             allowStartStopRecording=True,
             welcome=meeting_name,
-            running=True
+            running=True,
+            moderador=user.usuario
         )
         for sala in salas:
             bbb.salas.add(sala)
@@ -195,6 +204,12 @@ class ReunionLibreView(LoginRequiredMixin, FormView):
             messages.warning(self.request,
                              'El codigo de reunion no es correcto o no se encuentra activo en este momento!.')
         return super().form_valid(form)
+
+
+class DetalleView(LoginRequiredMixin, DeleteView):
+    template_name = "detalle_reunion.html"
+    model = BBBMeeting
+    success_url = "/panel"
 
 
 # ============== Directores =======================
