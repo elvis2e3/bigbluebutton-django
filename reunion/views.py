@@ -69,6 +69,12 @@ class LogoutView(LoginRequiredMixin, LogoutViewDjango):
     pass
 
 
+class DetalleView(LoginRequiredMixin, DeleteView):
+    template_name = "detalle_reunion.html"
+    model = BBBMeeting
+    success_url = "/panel"
+
+
 # ============== Reuniones ========================
 
 
@@ -135,6 +141,21 @@ class CrearReunionSalaView(LoginRequiredMixin, FormView):
     form_class = CrearReunionSalaForm
     success_url = '/panel'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        try:
+            if self.request.user.groups.all()[0].name == "Director":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                entidad = (Entidad.objects.filter(encargado=usaurio))[0]
+                usaurios = entidad.miembros.filter(user__groups__name="Profesor")
+                context["form"].fields["salas"].queryset = Sala.objects.filter(moderador__in=usaurios)
+            elif self.request.user.groups.all()[0].name != "Admin":
+                usaurio = Usuario.objects.get(user=self.request.user)
+                context["form"].fields["salas"].queryset = Sala.objects.filter(moderador=usaurio)
+        except:
+            pass
+        return context
+
     def form_valid(self, form):
         user = self.request.user
         group_name = user.groups.values_list('name', flat=True)[0]
@@ -142,7 +163,8 @@ class CrearReunionSalaView(LoginRequiredMixin, FormView):
         meeting_name = form_data['name']
         meeting_duration = form_data['duration']
         code = sha1((str(user.id) + " -" + meeting_name).encode('utf-8')).hexdigest()
-        BBBMeeting.objects.create(
+        salas = form_data['salas']
+        bbb = BBBMeeting.objects.create(
             name=meeting_name,
             meetingID=code,
             attendeePW="estudiante",
@@ -153,6 +175,8 @@ class CrearReunionSalaView(LoginRequiredMixin, FormView):
             welcome=meeting_name,
             running=True
         )
+        for sala in salas:
+            bbb.salas.add(sala)
         messages.success(self.request, 'Se creo una nueva reunion.')
         return super().form_valid(form)
 
@@ -591,7 +615,4 @@ class ListaMiembrosEntidadView(LoginRequiredMixin, DetailView):
 
 # ==============
 
-
-class DetalleView(TemplateView):
-    template_name = "detalle_reunion.html"
 

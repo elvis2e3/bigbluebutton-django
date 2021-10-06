@@ -33,12 +33,12 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-lg-8 col-lg-offset-2">
+                                <p>Esta seguro de que quiere eliminar a esta reunion "{{ object }}"?</p>
                                 <form method="post">
                                     {% csrf_token %}
-                                    {{ form.as_p }}
                                     <div class="row">
                                         <div class="col-lg-6">
-                                            <a onclick="activar_spinner_form()" class="btn btn-danger block full-width m-b">Eliminar Reunión</a>
+                                            <button type="submit" onclick="activar_spinner_form()" class="btn btn-danger block full-width m-b">Eliminar Reunión</button>
                                         </div>
                                         <div class="col-lg-6">
                                             <a onclick="activar_spinner()" class="btn btn-sm btn-white btn-block form-control" href="{% url  'panel' %}">Atras</a>
