@@ -90,9 +90,10 @@
                                             <thead>
                                             <tr>
 <!--                                                <th>Código Reunión</th>-->
-                                                <th>Nombre</th>
-                                                {% if user.groups.all.0.name != "Estudiate" %}
-                                                <th>Estado</th>
+                                                <th>Nombre </th>
+                                                {% if user.groups.all.0.name != "Estudiante" %}
+                                                    <th>Estado</th>
+                                                {% endif %}
                                                 <th>Detalle</th>
 
                                             </tr>
@@ -103,7 +104,7 @@
                                             <tr>
 <!--                                                <td>{{meetingdb.meetingID}}</td>-->
                                                 <td> {{meetingdb.name}} </td>
-
+                                                {% if user.groups.all.0.name != "Estudiante" %}
                                                 <td>
                                                     {% if meetingdb.meetingID in open_meetings %}
                                                     <a onclick="activar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
@@ -111,6 +112,7 @@
                                                     <a onclick="activar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
                                                     {% endif %}
                                                 </td>
+                                                {% endif %}
                                                 <td>
                                                     <a onclick="activar_spinner()" class="badge badge-warning"  href="{% url 'detalle_reunion' meetingdb.pk %}"> Ver detalle </a>
                                                 </td>
