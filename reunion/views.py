@@ -110,6 +110,39 @@ class PanelView(LoginRequiredMixin, TemplateView):
         return context
 
 
+class ListaReunionesActivasView(LoginRequiredMixin, DetailView):
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.groups.all()[0].name == "Estudiante":
+            salas = Sala.objects.filter(miembros=user.usuario)
+            reuniones = BBBMeeting.objects.filter(salas__in=salas).order_by('meetingID')
+            db_meeting = {}
+            for reunion in reuniones:
+                db_meeting[reunion.id] = reunion
+            db_meeting = db_meeting.values()
+        else:
+            db_meeting = BBBMeeting.objects.filter(moderador=user.usuario).order_by('meetingID')
+        open_meetings = []
+
+        try:
+            bbb_meeting = BBBMeeting.get_meetings_list()
+        except:
+            messages.warning(self.request, 'Tenemos problemas de conexion.')
+            bbb_meeting = []
+        filtro = []
+        bbb_meeting_dict = {}
+        for meet in bbb_meeting:
+            bbb_meeting_dict[meet['meetingID']] = meet
+            open_meetings.append(meet['meetingID'])
+        for meet in db_meeting:
+            if meet.meetingID in bbb_meeting_dict:
+                filtro.append(meet)
+        # context['live_meetings'] = filtro
+
+
+        return JsonResponse({'miembros': "miembros"})
+
+
 class CrearReunionView(LoginRequiredMixin, FormView):
     template_name = "crear_reunion.html"
     form_class = CrearReunionForm

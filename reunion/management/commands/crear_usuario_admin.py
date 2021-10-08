@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User, Group
+from django.core.management.base import BaseCommand
 
-from django.core.management.base import BaseCommand, CommandError
+from reunion.models import Usuario
 
 class Command(BaseCommand):
     help = 'help text'
@@ -20,3 +21,7 @@ class Command(BaseCommand):
         print("admin")
         print("Nota: Una vez iniciado sesion cambie inmediatamente de clave por la segurida de su informacion.")
         user_admin.groups.add(group_admin)
+        Usuario.object.create(
+            user=user_admin,
+            nombres="Admin",
+        )
