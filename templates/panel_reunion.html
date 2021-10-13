@@ -48,32 +48,45 @@
                                 <div class="card-body">
                                     <h4 class="card-title">Reuniones Activas</h4>
                                     <div class="table-responsive">
-                                        <table class="table">
+<!--                                        <table class="table">-->
+<!--                                            <thead>-->
+<!--                                            <tr>-->
+<!--                                                <th>Código Reunión</th>-->
+<!--                                                <th>Duracion</th>-->
+<!--                                                <th>Estdo</th>-->
+<!--                                            </tr>-->
+<!--                                            </thead>-->
+<!--                                            <tbody>-->
+<!--                                            {% for meeting in live_meetings %}-->
+<!--                                                <tr>-->
+<!--                                                    <td>{{meeting.meetingID}}</td>-->
+<!--                                                    <td> {{meeting.duration}} min </td>-->
+<!--                                                    <td>-->
+<!--                                                        {% if meeting.running == 'true' %}-->
+<!--                                                            <span class="badge badge-success"  href="{% url 'end' meeting.meetingID %}"> activo </span>-->
+<!--                                                            <a target="_blank" onclick="activar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>-->
+<!--                                                        {% else %}-->
+<!--&lt;!&ndash;                                                            <span class="badge badge-secondary" href="{% url 'create' meeting.meetingID %}"> inactivo </span>&ndash;&gt;-->
+<!--                                                            <a target="_blank" class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>-->
+<!--&lt;!&ndash;                                                            <a data-toggle="modal" data-target="#infoModal" data-id="{{ meeting.meetingID }}" class="badge badge-warning getinfo" href="#"> informacion </a>&ndash;&gt;-->
+<!--                                                        {% endif %}-->
+<!--                                                        {% empty %}-->
+<!--                                                    <td>No hay reuniones activas</td>-->
+<!--                                                </tr>-->
+<!--                                            {% endfor %}-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+                                        <table class="table" id="tabla_reuniones_activas">
                                             <thead>
                                             <tr>
                                                 <th>Código Reunión</th>
                                                 <th>Duracion</th>
-                                                <th>Estdo</th>
+                                                <th>Accion</th>
                                             </tr>
                                             </thead>
                                             <tbody>
-                                            {% for meeting in live_meetings %}
-                                                <tr>
-                                                    <td>{{meeting.meetingID}}</td>
-                                                    <td> {{meeting.duration}} min </td>
-                                                    <td>
-                                                        {% if meeting.running == 'true' %}
-                                                            <span class="badge badge-success"  href="{% url 'end' meeting.meetingID %}"> activo </span>
-                                                            <a target="_blank" onclick="activar_spinner()" data-toggle="modal" data-target="#joinAttendeForm" data-id="{{ meeting.meetingID }}" class="badge badge-info joinatt" href="#"> unirme </a>
-                                                        {% else %}
-<!--                                                            <span class="badge badge-secondary" href="{% url 'create' meeting.meetingID %}"> inactivo </span>-->
-                                                            <a target="_blank" class="badge badge-primary"  href="{% url 'join' meeting.meetingID %}"> unirme </a>
-<!--                                                            <a data-toggle="modal" data-target="#infoModal" data-id="{{ meeting.meetingID }}" class="badge badge-warning getinfo" href="#"> informacion </a>-->
-                                                        {% endif %}
-                                                        {% empty %}
-                                                    <td>No hay reuniones activas</td>
-                                                </tr>
-                                            {% endfor %}
+                                                <td hidden id="runiones_no">No hay reuniones activas</td>
+                                                <td id="reuniones_busqueda">Verificando ruiniones activas <i class="fa fa-refresh fa-spin fa-1x"></i> ...</td>
                                             </tbody>
                                         </table>
                                     </div>
@@ -131,7 +144,7 @@
         </div>
     </div>
 </div>
-
+</div>
 <!-- info Modal -->
 <div class="modal fade bd-example-modal-lg" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -195,6 +208,31 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script>
    $(document).ready(function() {
+        $.ajax({
+            type: "GET",
+            url: "panel/reuniones_activas",
+            dataType: 'json',
+            success: function (data) {
+                if(data["reuniones"].length > 0){
+                    data["reuniones"].forEach(function(meet, id_meet) {
+                        $("#tabla_reuniones_activas").find('tbody').append(
+                            $('<tr>').append(
+                                $('<td>').text(meet["id"]),
+                                $('<td>').text(meet["duration"] + " minutos"),
+                                $('<td>').append(
+                                    $('<a>').attr('href', 'joinmeeting/' + meet["id"]).text("unirme"),
+                                ),
+                            )
+                        );
+                    });
+                    $("#reuniones_busqueda").hide()
+                }else{
+                    $("#runiones_no").show()
+                    $("#reuniones_busqueda").hide()
+                }
+            }
+           })
+
 //>>>>>info modal===========================================================
        $('.getinfo').click(function () {
            meetingID = $(this).data('id');

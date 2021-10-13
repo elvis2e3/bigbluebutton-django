@@ -5,7 +5,7 @@ from reunion.views import IndexView, LoginView, PanelView, CrearReunionView, Log
     CrearDirectorView, EditarDirectorView, EliminarDirector, ListaEntidadesView, CrearEntidadView, EliminarEntidad, \
     EditarEntidadView, ListaProfesoresView, CrearProfesorView, EditarProfesorView, EliminarProfesor, \
     EditarEstudianteView, EliminarEstudiante, EditarSalaView, EliminarSala, ListaSalasView, ListaMiembrosEntidadView, \
-    CrearReunionSalaView
+    CrearReunionSalaView, ListaReunionesActivasView
 
 urlpatterns = [
     path('', IndexView.as_view(), name='index'),
@@ -18,6 +18,7 @@ urlpatterns = [
     path('panel/crear_reunion_por_aula', CrearReunionSalaView.as_view(), name='crear_reunion_por_aula'),
     path('panel/reunion_libre', ReunionLibreView.as_view(), name='reunion_libre'),
     path('panel/detalle_reunion/<pk>/', DetalleView.as_view(), name='detalle_reunion'),
+    path('panel/reuniones_activas', ListaReunionesActivasView.as_view(), name='reuniones_activas'),
     # =========== Directores ======================
     path('panel/lista_directores', ListaDirectoresView.as_view(), name='lista_directores'),
     path('panel/crear_director', CrearDirectorView.as_view(), name='crear_director'),
