@@ -142,6 +142,7 @@ class ListaReunionesActivasView(LoginRequiredMixin, DetailView):
                         "id": meet.meetingID,
                         "duration": meet.duration,
                         "running": meet.running,
+                        "name": meet.name,
                     }
                 )
         return JsonResponse({'reuniones': filtro})

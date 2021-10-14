@@ -61,12 +61,19 @@ def create_meeting(request, meetingID):
 
 def join_meeting(request, meetingID):
     # if request.user.is_authenticated:
+    print("entro a la reunion")
     meeting = BBBMeeting.objects.get(meetingID=meetingID)
-
-    full_name = '%s' % request.user.get_full_name()
+    full_name = '%s %s %s' % (
+    request.user.usuario.nombres, request.user.usuario.apellido_paterno, request.user.usuario.apellido_materno)
+    print("nombre:", full_name)
     password = getattr(meeting, 'moderatorPW')
-
-    join_url = BBBMeeting.join_meeting(meetingID, password, full_name)
+    if len(meeting.salas.all()) > 0:
+        if meeting.moderador.id == request.user.usuario.id:
+            join_url = BBBMeeting.join_meeting(meetingID, password, full_name)
+        else:
+            join_url = BBBMeeting.join_meeting(meetingID, "estudiante", full_name)
+    else:
+        join_url = BBBMeeting.join_meeting(meetingID, password, full_name)
     return redirect(join_url)
     # else:
     #     return redirect("/")

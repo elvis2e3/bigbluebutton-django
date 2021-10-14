@@ -79,7 +79,7 @@
                                         <table class="table" id="tabla_reuniones_activas">
                                             <thead>
                                             <tr>
-                                                <th>Código Reunión</th>
+                                                <th>Nombre de la Reunión</th>
                                                 <th>Duracion</th>
                                                 <th>Accion</th>
                                             </tr>
@@ -118,12 +118,12 @@
 <!--                                                <td>{{meetingdb.meetingID}}</td>-->
                                                 <td> {{meetingdb.name}} </td>
                                                 {% if user.groups.all.0.name != "Estudiante" %}
-                                                <td>
-                                                    {% if meetingdb.meetingID in open_meetings %}
-                                                    <a onclick="activar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>
-                                                    {% else %}
-                                                    <a onclick="activar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>
-                                                    {% endif %}
+                                                <td id="{{meetingdb.meetingID}}">
+<!--                                                    {% if meetingdb.meetingID in open_meetings %}-->
+<!--                                                    <a onclick="activar_spinner()" class="badge badge-danger"  href="{% url 'end' meetingdb.meetingID %}"> parar </a>-->
+<!--                                                    {% else %}-->
+<!--                                                    <a onclick="activar_spinner()" class="badge badge-success"  href="{% url 'create' meetingdb.meetingID %}"> iniciar </a>-->
+<!--                                                    {% endif %}-->
                                                 </td>
                                                 {% endif %}
                                                 <td>
@@ -208,30 +208,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script>
    $(document).ready(function() {
-        $.ajax({
-            type: "GET",
-            url: "panel/reuniones_activas",
-            dataType: 'json',
-            success: function (data) {
-                if(data["reuniones"].length > 0){
-                    data["reuniones"].forEach(function(meet, id_meet) {
-                        $("#tabla_reuniones_activas").find('tbody').append(
-                            $('<tr>').append(
-                                $('<td>').text(meet["id"]),
-                                $('<td>').text(meet["duration"] + " minutos"),
-                                $('<td>').append(
-                                    $('<a>').attr('href', 'joinmeeting/' + meet["id"]).text("unirme"),
-                                ),
-                            )
-                        );
-                    });
-                    $("#reuniones_busqueda").hide()
-                }else{
-                    $("#runiones_no").show()
-                    $("#reuniones_busqueda").hide()
-                }
-            }
-           })
 
 //>>>>>info modal===========================================================
        $('.getinfo').click(function () {
@@ -271,8 +247,52 @@
       })
 
 //<<<<< join as attendee==============================================================
-
+        $.ajax({
+            type: "GET",
+            url: "panel/reuniones_activas",
+            dataType: 'json',
+            success: function (data) {
+                if(data["reuniones"].length > 0){
+                    data["reuniones"].forEach(function(meet, id_meet) {
+                        $("#tabla_reuniones_activas").find('tbody').append(
+                            $('<tr>').append(
+                                $('<td>').text(meet["name"]),
+                                $('<td>').text(meet["duration"] + " minutos"),
+                                $('<td>').append(
+                                    $('<a>').attr('href', 'joinmeeting/' + meet["id"]).attr("target", "_blank").attr("class", "badge badge-primary").text("unirme"),
+                                ),
+                            )
+                        );
+                    });
+                    $("#reuniones_busqueda").hide()
+                    lista_meet.forEach(function(meet) {
+                        if(Object.values(data["reuniones"]).map((key) => key["id"]).includes(meet)){
+                            $("#" + meet).append(
+                                $('<a>').attr('href', 'endmeeting/' + meet).attr("onclick", "activar_spinner()").attr("class", "badge badge-danger").text("parar")
+                            )
+                        }else{
+                            $("#" + meet).append(
+                                $('<a>').attr('href', 'create/' + meet).attr("onclick", "activar_spinner()").attr("class", "badge badge-success").text("iniciar")
+                            )
+                        }
+                    });
+                }else{
+                    $("#runiones_no").show()
+                    $("#reuniones_busqueda").hide()
+                    lista_meet.forEach(function(meet) {
+                        $("#" + meet).append(
+                            $('<a>').attr('href', 'create/' + meet).attr("onclick", "activar_spinner()").attr("class", "badge badge-success").text("iniciar")
+                        )
+                    });
+                }
+            }
+        })
    });
+   lista_meet = [
+   {% for meetingdb in meetingsdb %}
+        "{{meetingdb.meetingID}}",
+   {% endfor %}
+   ]
 
  </script>
 {% endblock %}
